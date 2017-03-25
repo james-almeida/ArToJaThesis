@@ -15,6 +15,7 @@
 		B30236EA1E86DBD00009D82C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B30236E81E86DBD00009D82C /* LaunchScreen.storyboard */; };
 		B30236F51E86DBD00009D82C /* ArToJaThesisTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B30236F41E86DBD00009D82C /* ArToJaThesisTests.m */; };
 		B30237001E86DBD00009D82C /* ArToJaThesisUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = B30236FF1E86DBD00009D82C /* ArToJaThesisUITests.m */; };
+		B302370F1E86DFAF0009D82C /* DJICameraViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B302370E1E86DFAF0009D82C /* DJICameraViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +52,8 @@
 		B30236FB1E86DBD00009D82C /* ArToJaThesisUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ArToJaThesisUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B30236FF1E86DBD00009D82C /* ArToJaThesisUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArToJaThesisUITests.m; sourceTree = "<group>"; };
 		B30237011E86DBD00009D82C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B302370D1E86DFAF0009D82C /* DJICameraViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DJICameraViewController.h; sourceTree = "<group>"; };
+		B302370E1E86DFAF0009D82C /* DJICameraViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DJICameraViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +104,8 @@
 		B30236D91E86DBD00009D82C /* ArToJaThesis */ = {
 			isa = PBXGroup;
 			children = (
+				B302370D1E86DFAF0009D82C /* DJICameraViewController.h */,
+				B302370E1E86DFAF0009D82C /* DJICameraViewController.m */,
 				B30236DD1E86DBD00009D82C /* AppDelegate.h */,
 				B30236DE1E86DBD00009D82C /* AppDelegate.m */,
 				B30236E01E86DBD00009D82C /* ViewController.h */,
@@ -279,6 +284,7 @@
 				B30236E21E86DBD00009D82C /* ViewController.m in Sources */,
 				B30236DF1E86DBD00009D82C /* AppDelegate.m in Sources */,
 				B30236DC1E86DBD00009D82C /* main.m in Sources */,
+				B302370F1E86DFAF0009D82C /* DJICameraViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
