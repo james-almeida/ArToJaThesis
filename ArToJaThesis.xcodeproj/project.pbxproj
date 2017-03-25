@@ -1,0 +1,539 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		B30236DC1E86DBD00009D82C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B30236DB1E86DBD00009D82C /* main.m */; };
+		B30236DF1E86DBD00009D82C /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B30236DE1E86DBD00009D82C /* AppDelegate.m */; };
+		B30236E21E86DBD00009D82C /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B30236E11E86DBD00009D82C /* ViewController.m */; };
+		B30236E51E86DBD00009D82C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B30236E31E86DBD00009D82C /* Main.storyboard */; };
+		B30236E71E86DBD00009D82C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B30236E61E86DBD00009D82C /* Assets.xcassets */; };
+		B30236EA1E86DBD00009D82C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B30236E81E86DBD00009D82C /* LaunchScreen.storyboard */; };
+		B30236F51E86DBD00009D82C /* ArToJaThesisTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B30236F41E86DBD00009D82C /* ArToJaThesisTests.m */; };
+		B30237001E86DBD00009D82C /* ArToJaThesisUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = B30236FF1E86DBD00009D82C /* ArToJaThesisUITests.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B30236F11E86DBD00009D82C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B30236CF1E86DBD00009D82C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B30236D61E86DBD00009D82C;
+			remoteInfo = ArToJaThesis;
+		};
+		B30236FC1E86DBD00009D82C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B30236CF1E86DBD00009D82C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B30236D61E86DBD00009D82C;
+			remoteInfo = ArToJaThesis;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		B30236D71E86DBD00009D82C /* ArToJaThesis.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ArToJaThesis.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B30236DB1E86DBD00009D82C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		B30236DD1E86DBD00009D82C /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		B30236DE1E86DBD00009D82C /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		B30236E01E86DBD00009D82C /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		B30236E11E86DBD00009D82C /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		B30236E41E86DBD00009D82C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		B30236E61E86DBD00009D82C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B30236E91E86DBD00009D82C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		B30236EB1E86DBD00009D82C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B30236F01E86DBD00009D82C /* ArToJaThesisTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ArToJaThesisTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B30236F41E86DBD00009D82C /* ArToJaThesisTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArToJaThesisTests.m; sourceTree = "<group>"; };
+		B30236F61E86DBD00009D82C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B30236FB1E86DBD00009D82C /* ArToJaThesisUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ArToJaThesisUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B30236FF1E86DBD00009D82C /* ArToJaThesisUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArToJaThesisUITests.m; sourceTree = "<group>"; };
+		B30237011E86DBD00009D82C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		B30236D41E86DBD00009D82C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B30236ED1E86DBD00009D82C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B30236F81E86DBD00009D82C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		B30236CE1E86DBD00009D82C = {
+			isa = PBXGroup;
+			children = (
+				B30236D91E86DBD00009D82C /* ArToJaThesis */,
+				B30236F31E86DBD00009D82C /* ArToJaThesisTests */,
+				B30236FE1E86DBD00009D82C /* ArToJaThesisUITests */,
+				B30236D81E86DBD00009D82C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		B30236D81E86DBD00009D82C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B30236D71E86DBD00009D82C /* ArToJaThesis.app */,
+				B30236F01E86DBD00009D82C /* ArToJaThesisTests.xctest */,
+				B30236FB1E86DBD00009D82C /* ArToJaThesisUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B30236D91E86DBD00009D82C /* ArToJaThesis */ = {
+			isa = PBXGroup;
+			children = (
+				B30236DD1E86DBD00009D82C /* AppDelegate.h */,
+				B30236DE1E86DBD00009D82C /* AppDelegate.m */,
+				B30236E01E86DBD00009D82C /* ViewController.h */,
+				B30236E11E86DBD00009D82C /* ViewController.m */,
+				B30236E31E86DBD00009D82C /* Main.storyboard */,
+				B30236E61E86DBD00009D82C /* Assets.xcassets */,
+				B30236E81E86DBD00009D82C /* LaunchScreen.storyboard */,
+				B30236EB1E86DBD00009D82C /* Info.plist */,
+				B30236DA1E86DBD00009D82C /* Supporting Files */,
+			);
+			path = ArToJaThesis;
+			sourceTree = "<group>";
+		};
+		B30236DA1E86DBD00009D82C /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				B30236DB1E86DBD00009D82C /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		B30236F31E86DBD00009D82C /* ArToJaThesisTests */ = {
+			isa = PBXGroup;
+			children = (
+				B30236F41E86DBD00009D82C /* ArToJaThesisTests.m */,
+				B30236F61E86DBD00009D82C /* Info.plist */,
+			);
+			path = ArToJaThesisTests;
+			sourceTree = "<group>";
+		};
+		B30236FE1E86DBD00009D82C /* ArToJaThesisUITests */ = {
+			isa = PBXGroup;
+			children = (
+				B30236FF1E86DBD00009D82C /* ArToJaThesisUITests.m */,
+				B30237011E86DBD00009D82C /* Info.plist */,
+			);
+			path = ArToJaThesisUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		B30236D61E86DBD00009D82C /* ArToJaThesis */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B30237041E86DBD00009D82C /* Build configuration list for PBXNativeTarget "ArToJaThesis" */;
+			buildPhases = (
+				B30236D31E86DBD00009D82C /* Sources */,
+				B30236D41E86DBD00009D82C /* Frameworks */,
+				B30236D51E86DBD00009D82C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ArToJaThesis;
+			productName = ArToJaThesis;
+			productReference = B30236D71E86DBD00009D82C /* ArToJaThesis.app */;
+			productType = "com.apple.product-type.application";
+		};
+		B30236EF1E86DBD00009D82C /* ArToJaThesisTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B30237071E86DBD00009D82C /* Build configuration list for PBXNativeTarget "ArToJaThesisTests" */;
+			buildPhases = (
+				B30236EC1E86DBD00009D82C /* Sources */,
+				B30236ED1E86DBD00009D82C /* Frameworks */,
+				B30236EE1E86DBD00009D82C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B30236F21E86DBD00009D82C /* PBXTargetDependency */,
+			);
+			name = ArToJaThesisTests;
+			productName = ArToJaThesisTests;
+			productReference = B30236F01E86DBD00009D82C /* ArToJaThesisTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		B30236FA1E86DBD00009D82C /* ArToJaThesisUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B302370A1E86DBD00009D82C /* Build configuration list for PBXNativeTarget "ArToJaThesisUITests" */;
+			buildPhases = (
+				B30236F71E86DBD00009D82C /* Sources */,
+				B30236F81E86DBD00009D82C /* Frameworks */,
+				B30236F91E86DBD00009D82C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B30236FD1E86DBD00009D82C /* PBXTargetDependency */,
+			);
+			name = ArToJaThesisUITests;
+			productName = ArToJaThesisUITests;
+			productReference = B30236FB1E86DBD00009D82C /* ArToJaThesisUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B30236CF1E86DBD00009D82C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0820;
+				ORGANIZATIONNAME = "James Almeida";
+				TargetAttributes = {
+					B30236D61E86DBD00009D82C = {
+						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = SL962NMQ3M;
+						ProvisioningStyle = Automatic;
+					};
+					B30236EF1E86DBD00009D82C = {
+						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = SL962NMQ3M;
+						ProvisioningStyle = Automatic;
+						TestTargetID = B30236D61E86DBD00009D82C;
+					};
+					B30236FA1E86DBD00009D82C = {
+						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = SL962NMQ3M;
+						ProvisioningStyle = Automatic;
+						TestTargetID = B30236D61E86DBD00009D82C;
+					};
+				};
+			};
+			buildConfigurationList = B30236D21E86DBD00009D82C /* Build configuration list for PBXProject "ArToJaThesis" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = B30236CE1E86DBD00009D82C;
+			productRefGroup = B30236D81E86DBD00009D82C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				B30236D61E86DBD00009D82C /* ArToJaThesis */,
+				B30236EF1E86DBD00009D82C /* ArToJaThesisTests */,
+				B30236FA1E86DBD00009D82C /* ArToJaThesisUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		B30236D51E86DBD00009D82C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B30236EA1E86DBD00009D82C /* LaunchScreen.storyboard in Resources */,
+				B30236E71E86DBD00009D82C /* Assets.xcassets in Resources */,
+				B30236E51E86DBD00009D82C /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B30236EE1E86DBD00009D82C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B30236F91E86DBD00009D82C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		B30236D31E86DBD00009D82C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B30236E21E86DBD00009D82C /* ViewController.m in Sources */,
+				B30236DF1E86DBD00009D82C /* AppDelegate.m in Sources */,
+				B30236DC1E86DBD00009D82C /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B30236EC1E86DBD00009D82C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B30236F51E86DBD00009D82C /* ArToJaThesisTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B30236F71E86DBD00009D82C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B30237001E86DBD00009D82C /* ArToJaThesisUITests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B30236F21E86DBD00009D82C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B30236D61E86DBD00009D82C /* ArToJaThesis */;
+			targetProxy = B30236F11E86DBD00009D82C /* PBXContainerItemProxy */;
+		};
+		B30236FD1E86DBD00009D82C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B30236D61E86DBD00009D82C /* ArToJaThesis */;
+			targetProxy = B30236FC1E86DBD00009D82C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		B30236E31E86DBD00009D82C /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B30236E41E86DBD00009D82C /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		B30236E81E86DBD00009D82C /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B30236E91E86DBD00009D82C /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		B30237021E86DBD00009D82C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B30237031E86DBD00009D82C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B30237051E86DBD00009D82C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = SL962NMQ3M;
+				INFOPLIST_FILE = ArToJaThesis/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = jamesalmeida24.ArToJaThesis;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		B30237061E86DBD00009D82C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = SL962NMQ3M;
+				INFOPLIST_FILE = ArToJaThesis/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = jamesalmeida24.ArToJaThesis;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		B30237081E86DBD00009D82C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = SL962NMQ3M;
+				INFOPLIST_FILE = ArToJaThesisTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = jamesalmeida24.ArToJaThesisTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ArToJaThesis.app/ArToJaThesis";
+			};
+			name = Debug;
+		};
+		B30237091E86DBD00009D82C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = SL962NMQ3M;
+				INFOPLIST_FILE = ArToJaThesisTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = jamesalmeida24.ArToJaThesisTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ArToJaThesis.app/ArToJaThesis";
+			};
+			name = Release;
+		};
+		B302370B1E86DBD00009D82C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEVELOPMENT_TEAM = SL962NMQ3M;
+				INFOPLIST_FILE = ArToJaThesisUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = jamesalmeida24.ArToJaThesisUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = ArToJaThesis;
+			};
+			name = Debug;
+		};
+		B302370C1E86DBD00009D82C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEVELOPMENT_TEAM = SL962NMQ3M;
+				INFOPLIST_FILE = ArToJaThesisUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = jamesalmeida24.ArToJaThesisUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = ArToJaThesis;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		B30236D21E86DBD00009D82C /* Build configuration list for PBXProject "ArToJaThesis" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B30237021E86DBD00009D82C /* Debug */,
+				B30237031E86DBD00009D82C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B30237041E86DBD00009D82C /* Build configuration list for PBXNativeTarget "ArToJaThesis" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B30237051E86DBD00009D82C /* Debug */,
+				B30237061E86DBD00009D82C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		B30237071E86DBD00009D82C /* Build configuration list for PBXNativeTarget "ArToJaThesisTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B30237081E86DBD00009D82C /* Debug */,
+				B30237091E86DBD00009D82C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		B302370A1E86DBD00009D82C /* Build configuration list for PBXNativeTarget "ArToJaThesisUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B302370B1E86DBD00009D82C /* Debug */,
+				B302370C1E86DBD00009D82C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = B30236CF1E86DBD00009D82C /* Project object */;
+}
