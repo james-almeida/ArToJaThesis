@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0DA35D3D4A8BF56C249CC0F9 /* libPods-ArToJaThesis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0436B094E5E5D0CA3EA7275C /* libPods-ArToJaThesis.a */; };
 		B30236DC1E86DBD00009D82C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B30236DB1E86DBD00009D82C /* main.m */; };
 		B30236DF1E86DBD00009D82C /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B30236DE1E86DBD00009D82C /* AppDelegate.m */; };
 		B30236E21E86DBD00009D82C /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B30236E11E86DBD00009D82C /* ViewController.m */; };
@@ -16,6 +17,8 @@
 		B30236F51E86DBD00009D82C /* ArToJaThesisTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B30236F41E86DBD00009D82C /* ArToJaThesisTests.m */; };
 		B30237001E86DBD00009D82C /* ArToJaThesisUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = B30236FF1E86DBD00009D82C /* ArToJaThesisUITests.m */; };
 		B302370F1E86DFAF0009D82C /* DJICameraViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B302370E1E86DFAF0009D82C /* DJICameraViewController.m */; };
+		B30237DA1E86FE210009D82C /* VideoPreviewer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B30237D91E86FC3E0009D82C /* VideoPreviewer.framework */; };
+		B30237DB1E86FE210009D82C /* VideoPreviewer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B30237D91E86FC3E0009D82C /* VideoPreviewer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -33,9 +36,39 @@
 			remoteGlobalIDString = B30236D61E86DBD00009D82C;
 			remoteInfo = ArToJaThesis;
 		};
+		B30237D81E86FC3E0009D82C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B30237D41E86FC3D0009D82C /* VideoPreviewer.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 02A543FD1C3C51CB0083C11B;
+			remoteInfo = VideoPreviewer;
+		};
+		B30237DC1E86FE210009D82C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B30237D41E86FC3D0009D82C /* VideoPreviewer.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 02A543FC1C3C51CB0083C11B;
+			remoteInfo = VideoPreviewer;
+		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		B30237D21E86FBC50009D82C /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				B30237DB1E86FE210009D82C /* VideoPreviewer.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		0436B094E5E5D0CA3EA7275C /* libPods-ArToJaThesis.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ArToJaThesis.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		14520859EE43EB9E81CFAA5B /* Pods-ArToJaThesis.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ArToJaThesis.release.xcconfig"; path = "Pods/Target Support Files/Pods-ArToJaThesis/Pods-ArToJaThesis.release.xcconfig"; sourceTree = "<group>"; };
 		B30236D71E86DBD00009D82C /* ArToJaThesis.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ArToJaThesis.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B30236DB1E86DBD00009D82C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B30236DD1E86DBD00009D82C /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -54,6 +87,8 @@
 		B30237011E86DBD00009D82C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B302370D1E86DFAF0009D82C /* DJICameraViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DJICameraViewController.h; sourceTree = "<group>"; };
 		B302370E1E86DFAF0009D82C /* DJICameraViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DJICameraViewController.m; sourceTree = "<group>"; };
+		B30237D41E86FC3D0009D82C /* VideoPreviewer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = VideoPreviewer.xcodeproj; path = Frameworks/VideoPreviewer/VideoPreviewer.xcodeproj; sourceTree = "<group>"; };
+		D21BC0FA4314BB7B82095D59 /* Pods-ArToJaThesis.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ArToJaThesis.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ArToJaThesis/Pods-ArToJaThesis.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +96,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B30237DA1E86FE210009D82C /* VideoPreviewer.framework in Frameworks */,
+				0DA35D3D4A8BF56C249CC0F9 /* libPods-ArToJaThesis.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -81,6 +118,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A539BB3AE983DAB42C0AAB99 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0436B094E5E5D0CA3EA7275C /* libPods-ArToJaThesis.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		B30236CE1E86DBD00009D82C = {
 			isa = PBXGroup;
 			children = (
@@ -88,6 +133,8 @@
 				B30236F31E86DBD00009D82C /* ArToJaThesisTests */,
 				B30236FE1E86DBD00009D82C /* ArToJaThesisUITests */,
 				B30236D81E86DBD00009D82C /* Products */,
+				CCD6A9C8E6E2ADD393439C80 /* Pods */,
+				A539BB3AE983DAB42C0AAB99 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -104,6 +151,7 @@
 		B30236D91E86DBD00009D82C /* ArToJaThesis */ = {
 			isa = PBXGroup;
 			children = (
+				B30237D31E86FC340009D82C /* Frameworks */,
 				B302370D1E86DFAF0009D82C /* DJICameraViewController.h */,
 				B302370E1E86DFAF0009D82C /* DJICameraViewController.m */,
 				B30236DD1E86DBD00009D82C /* AppDelegate.h */,
@@ -145,6 +193,31 @@
 			path = ArToJaThesisUITests;
 			sourceTree = "<group>";
 		};
+		B30237D31E86FC340009D82C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B30237D41E86FC3D0009D82C /* VideoPreviewer.xcodeproj */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		B30237D51E86FC3D0009D82C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B30237D91E86FC3E0009D82C /* VideoPreviewer.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CCD6A9C8E6E2ADD393439C80 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				D21BC0FA4314BB7B82095D59 /* Pods-ArToJaThesis.debug.xcconfig */,
+				14520859EE43EB9E81CFAA5B /* Pods-ArToJaThesis.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -152,13 +225,18 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B30237041E86DBD00009D82C /* Build configuration list for PBXNativeTarget "ArToJaThesis" */;
 			buildPhases = (
+				A2EF652C1E9CEED5C2103AB2 /* [CP] Check Pods Manifest.lock */,
 				B30236D31E86DBD00009D82C /* Sources */,
 				B30236D41E86DBD00009D82C /* Frameworks */,
 				B30236D51E86DBD00009D82C /* Resources */,
+				ABACC2073D2A786F2B1A7CF8 /* [CP] Embed Pods Frameworks */,
+				4EAE94761A39A5600B470949 /* [CP] Copy Pods Resources */,
+				B30237D21E86FBC50009D82C /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				B30237DD1E86FE210009D82C /* PBXTargetDependency */,
 			);
 			name = ArToJaThesis;
 			productName = ArToJaThesis;
@@ -240,6 +318,12 @@
 			mainGroup = B30236CE1E86DBD00009D82C;
 			productRefGroup = B30236D81E86DBD00009D82C /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = B30237D51E86FC3D0009D82C /* Products */;
+					ProjectRef = B30237D41E86FC3D0009D82C /* VideoPreviewer.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				B30236D61E86DBD00009D82C /* ArToJaThesis */,
@@ -248,6 +332,16 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		B30237D91E86FC3E0009D82C /* VideoPreviewer.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = VideoPreviewer.framework;
+			remoteRef = B30237D81E86FC3E0009D82C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		B30236D51E86DBD00009D82C /* Resources */ = {
@@ -275,6 +369,54 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		4EAE94761A39A5600B470949 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ArToJaThesis/Pods-ArToJaThesis-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A2EF652C1E9CEED5C2103AB2 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		ABACC2073D2A786F2B1A7CF8 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ArToJaThesis/Pods-ArToJaThesis-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		B30236D31E86DBD00009D82C /* Sources */ = {
@@ -316,6 +458,11 @@
 			isa = PBXTargetDependency;
 			target = B30236D61E86DBD00009D82C /* ArToJaThesis */;
 			targetProxy = B30236FC1E86DBD00009D82C /* PBXContainerItemProxy */;
+		};
+		B30237DD1E86FE210009D82C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = VideoPreviewer;
+			targetProxy = B30237DC1E86FE210009D82C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -431,11 +578,17 @@
 		};
 		B30237051E86DBD00009D82C /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D21BC0FA4314BB7B82095D59 /* Pods-ArToJaThesis.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = SL962NMQ3M;
+				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = ArToJaThesis/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/ArToJaThesis/Frameworks/VideoPreviewer/VideoPreviewer/ffmpeg/lib",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = jamesalmeida24.ArToJaThesis;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -443,11 +596,17 @@
 		};
 		B30237061E86DBD00009D82C /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 14520859EE43EB9E81CFAA5B /* Pods-ArToJaThesis.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = SL962NMQ3M;
+				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = ArToJaThesis/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/ArToJaThesis/Frameworks/VideoPreviewer/VideoPreviewer/ffmpeg/lib",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = jamesalmeida24.ArToJaThesis;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -522,6 +681,7 @@
 				B30237061E86DBD00009D82C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B30237071E86DBD00009D82C /* Build configuration list for PBXNativeTarget "ArToJaThesisTests" */ = {
 			isa = XCConfigurationList;
@@ -530,6 +690,7 @@
 				B30237091E86DBD00009D82C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B302370A1E86DBD00009D82C /* Build configuration list for PBXNativeTarget "ArToJaThesisUITests" */ = {
 			isa = XCConfigurationList;
@@ -538,6 +699,7 @@
 				B302370C1E86DBD00009D82C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
