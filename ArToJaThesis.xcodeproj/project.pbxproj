@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		0DA35D3D4A8BF56C249CC0F9 /* libPods-ArToJaThesis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0436B094E5E5D0CA3EA7275C /* libPods-ArToJaThesis.a */; };
+		297B30F11E880AD00041DE62 /* OpenCVConversion.mm in Sources */ = {isa = PBXBuildFile; fileRef = 297B30F01E880AD00041DE62 /* OpenCVConversion.mm */; };
+		297B30F71E880AE30041DE62 /* Stitching.mm in Sources */ = {isa = PBXBuildFile; fileRef = 297B30F41E880AE30041DE62 /* Stitching.mm */; };
+		297B30F81E880AE30041DE62 /* StitchingWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 297B30F51E880AE30041DE62 /* StitchingWrapper.cpp */; };
 		B30236DC1E86DBD00009D82C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B30236DB1E86DBD00009D82C /* main.m */; };
 		B30236E21E86DBD00009D82C /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B30236E11E86DBD00009D82C /* ViewController.m */; };
 		B30236E51E86DBD00009D82C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B30236E31E86DBD00009D82C /* Main.storyboard */; };
@@ -71,6 +74,13 @@
 /* Begin PBXFileReference section */
 		0436B094E5E5D0CA3EA7275C /* libPods-ArToJaThesis.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ArToJaThesis.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		14520859EE43EB9E81CFAA5B /* Pods-ArToJaThesis.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ArToJaThesis.release.xcconfig"; path = "Pods/Target Support Files/Pods-ArToJaThesis/Pods-ArToJaThesis.release.xcconfig"; sourceTree = "<group>"; };
+		297B30EE1E8808FF0041DE62 /* PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
+		297B30EF1E880AD00041DE62 /* OpenCVConversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenCVConversion.h; path = CV/OpenCVConversion.h; sourceTree = "<group>"; };
+		297B30F01E880AD00041DE62 /* OpenCVConversion.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OpenCVConversion.mm; path = CV/OpenCVConversion.mm; sourceTree = "<group>"; };
+		297B30F31E880AE30041DE62 /* Stitching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Stitching.h; path = CV/Stitching.h; sourceTree = "<group>"; };
+		297B30F41E880AE30041DE62 /* Stitching.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Stitching.mm; path = CV/Stitching.mm; sourceTree = "<group>"; };
+		297B30F51E880AE30041DE62 /* StitchingWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StitchingWrapper.cpp; path = CV/StitchingWrapper.cpp; sourceTree = "<group>"; };
+		297B30F61E880AE30041DE62 /* StitchingWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StitchingWrapper.h; path = CV/StitchingWrapper.h; sourceTree = "<group>"; };
 		B30236D71E86DBD00009D82C /* ArToJaThesis.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ArToJaThesis.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B30236DB1E86DBD00009D82C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B30236E01E86DBD00009D82C /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
@@ -124,6 +134,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		297B30F21E880AD50041DE62 /* CV */ = {
+			isa = PBXGroup;
+			children = (
+				297B30F31E880AE30041DE62 /* Stitching.h */,
+				297B30F41E880AE30041DE62 /* Stitching.mm */,
+				297B30F51E880AE30041DE62 /* StitchingWrapper.cpp */,
+				297B30F61E880AE30041DE62 /* StitchingWrapper.h */,
+				297B30EF1E880AD00041DE62 /* OpenCVConversion.h */,
+				297B30F01E880AD00041DE62 /* OpenCVConversion.mm */,
+			);
+			name = CV;
+			sourceTree = "<group>";
+		};
 		A539BB3AE983DAB42C0AAB99 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -162,6 +185,8 @@
 				B302370E1E86DFAF0009D82C /* DJICameraViewController.m */,
 				B30237DE1E86FFE10009D82C /* AppDelegate.h */,
 				B30237DF1E86FFE10009D82C /* AppDelegate.m */,
+				297B30EE1E8808FF0041DE62 /* PrefixHeader.pch */,
+				297B30F21E880AD50041DE62 /* CV */,
 				B30237E01E86FFE10009D82C /* DemoUtility.h */,
 				B30237E11E86FFE10009D82C /* DemoUtility.m */,
 				B30237E21E86FFE10009D82C /* VirtualStickView.h */,
@@ -433,7 +458,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				297B30F81E880AE30041DE62 /* StitchingWrapper.cpp in Sources */,
 				B30236E21E86DBD00009D82C /* ViewController.m in Sources */,
+				297B30F71E880AE30041DE62 /* Stitching.mm in Sources */,
+				297B30F11E880AD00041DE62 /* OpenCVConversion.mm in Sources */,
 				B30237E61E86FFE20009D82C /* VirtualStickView.m in Sources */,
 				B30236DC1E86DBD00009D82C /* main.m in Sources */,
 				B30237E51E86FFE10009D82C /* DemoUtility.m in Sources */,
@@ -596,6 +624,8 @@
 				DEVELOPMENT_TEAM = SL962NMQ3M;
 				ENABLE_BITCODE = NO;
 				GCC_NO_COMMON_BLOCKS = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/ArToJaThesis/PrefixHeader.pch";
 				INFOPLIST_FILE = ArToJaThesis/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
@@ -615,6 +645,8 @@
 				DEVELOPMENT_TEAM = SL962NMQ3M;
 				ENABLE_BITCODE = NO;
 				GCC_NO_COMMON_BLOCKS = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/ArToJaThesis/PrefixHeader.pch";
 				INFOPLIST_FILE = ArToJaThesis/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
