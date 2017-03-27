@@ -1,0 +1,21 @@
+//
+//  PrefixHeader.pch
+//  PanoDemo
+//
+//  Created by DJI on 15/7/30.
+//  Copyright (c) 2016 Tony Jin. All rights reserved.
+//
+
+#ifndef ArToJaThesis_PrefixHeader_pch
+#define ArToJaThesis_PrefixHeader_pch
+
+#ifdef __cplusplus
+    #import <opencv2/opencv.hpp>
+#endif
+
+#ifdef __OBJC__
+    #import <UIKit/UIKit.h>
+    #import <Foundation/Foundation.h>
+#endif
+
+#endif
