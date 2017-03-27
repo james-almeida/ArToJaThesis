@@ -53,35 +53,34 @@
     
     // convert to cv::Mat datatype
     // http://stackoverflow.com/questions/10254141/how-to-convert-from-cvmat-to-uiimage-in-objective-c/10254561
-    cv::Mat compressedMat = [OpenCVConversion cvMat3FromUIImage:compressedImage];
+    cv::Mat compressedMat = [OpenCVConversion cvMat3FromUIImage:compressedUIImage];
     
-    // find target
-    
+    // steps to find target
     // 1. convert to HSV
     cv::Mat hsvImage;
-    cv::cvtColor(&compressedImage, &hsvImage, CV_BGR2HSV)
+    cv::cvtColor(compressedMat, hsvImage, CV_BGR2HSV);
     
     // 2. create mask for red & blue, sum together
     
     cv::Mat redMask, blueMask, sumMask;
     
-    cv::inRange(hsvImage, cvScalar(110, 150, 150), cvScalar(130, 255, 255), blueMask);
-    cv::inRange(hsvImage, cvScalar(-5, 150, 150), cvScalar(5, 150, 150), redMask);
+    cv::inRange(hsvImage, cv::Scalar(110, 150, 150), cv::Scalar(130, 255, 255), blueMask);
+    cv::inRange(hsvImage, cv::Scalar(-5, 150, 150), cv::Scalar(5, 150, 150), redMask);
     
-    if (blueMask == NULL || redMask == NULL) return NULL;
+//    if ((blueMask == nil) || (redMask == nil)) return NULL;
     
     cv::add(blueMask, redMask, sumMask);
     
     // 3. laplacian for sum
     cv::Mat laplaceImage;
-    cv::laplace(sumMask, laplaceImage)
+    cv::Laplacian(sumMask, laplaceImage, -1);
     
     // 4. '+' shaped kernel
-    NSInteger n = 50;
-    NSInteger m = 5;
+    int n = 50;
+    int m = 5;
     cv::Mat kernel = cv::Mat(n, n, CV_64F, -1.0);
-    for (NSInteger i = 0; i < n; i++) {
-        for (NSInteger j = 0; j < n; j++) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
             if (i < n + m && i > n - m)
                 kernel.at<double>(i,j) = 1;
             if (j < n + m && j > n - m)
@@ -90,20 +89,20 @@
     }
     
     cv::Mat filteredImage;
-    cv::filter2D(laplaceImage, filteredImage, &kernel);  // kernel or &kernel?
+    cv::filter2D(laplaceImage, filteredImage, -1, kernel);  // kernel or &kernel?
     
     // 5. find index of max value
-    NSInteger rows = I.rows();
-    NSInteger cols = I.cols();
+    NSInteger rows = filteredImage.rows;
+    NSInteger cols = filteredImage.cols;
     
     NSInteger xmax, ymax, maxval;
     xmax = -1;
     ymax = -1;
     maxval = 0;
     
-    for (NSInteger i = 0; i < rows; i++) {
-        for (NSInteger j = 0; j < cols; j++) {
-            if (filteredImage.at<double>(i,j) > max) {
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            if (filteredImage.at<double>(i,j) > maxval) {
                 xmax = i;
                 ymax = j;
             }
@@ -114,7 +113,7 @@
         return NULL;
     
     // return result, or null
-    return [NSArray arrayWithObjects:@xmax, @ymax];
+    return @[[NSNumber numberWithInteger:xmax], [NSNumber numberWithInteger:ymax]];
 }
 
 

@@ -9,6 +9,11 @@
 #ifndef Stitching_Header_h
 #define Stitching_Header_h
 
+namespace cv
+{
+    using std::vector;
+}
+
 bool stitch (const cv::vector <cv::Mat> & images, cv::Mat &result);
 
 #endif

@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface ImageProcessing : NSObject
+@interface OpenCVConversion : NSObject
 
 + (cv::Mat)cvMatFromUIImage:(UIImage *)image;		//convert UIImage to cv::Mat
 + (cv::Mat)cvMatGrayFromUIImage:(UIImage *)image;	//convert UIImage to gray cv::Mat
