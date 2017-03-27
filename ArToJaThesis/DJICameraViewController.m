@@ -109,6 +109,8 @@
     // Dispose of any resources that can be recreated.
 }
 
+
+
 #pragma mark Custom Camera Methods
 - (DJICamera*) fetchCamera {
     
@@ -149,6 +151,8 @@
     NSString *formattedTimeString = [formatter stringFromDate:date];
     return formattedTimeString;
 }
+
+
 
 
 #pragma mark - Custom Methods
@@ -308,6 +312,76 @@
     }
 }
 
+- (void)leftStickUp
+{
+    CGPoint dir;
+    dir.x = 0;
+    dir.y = -0.1;
+    
+    [self setThrottle:dir.y andYaw:dir.x];
+}
+
+- (void)rightStickUp
+{
+    CGPoint dir;
+    dir.x = 0;
+    dir.y = -0.1;
+    [self setXVelocity:-dir.y andYVelocity:dir.x];
+}
+
+- (void)leftStickRight
+{
+    CGPoint dir;
+    dir.x = 0.1;
+    dir.y = 0;
+    
+    [self setThrottle:dir.y andYaw:dir.x];
+}
+
+- (void)rightStickRight
+{
+    CGPoint dir;
+    dir.x = 0.1;
+    dir.y = 0;
+    [self setXVelocity:-dir.y andYVelocity:dir.x];
+}
+
+- (void)leftStickDown
+{
+    CGPoint dir;
+    dir.x = 0;
+    dir.y = 0.1;
+    
+    [self setThrottle:dir.y andYaw:dir.x];
+}
+
+- (void)rightStickDown
+{
+    CGPoint dir;
+    dir.x = 0;
+    dir.y = 0.1;
+    [self setXVelocity:-dir.y andYVelocity:dir.x];
+}
+
+- (void)leftStickLeft
+{
+    CGPoint dir;
+    dir.x = -0.1;
+    dir.y = 0;
+    
+    [self setThrottle:dir.y andYaw:dir.x];
+}
+
+- (void)rightStickLeft
+{
+    CGPoint dir;
+    dir.x = -0.1;
+    dir.y = 0;
+    [self setXVelocity:-dir.y andYVelocity:dir.x];
+}
+
+
+
 -(void) setThrottle:(float)y andYaw:(float)x
 {
     self.mThrottle = y * -2;
@@ -334,6 +408,8 @@
         [fc sendVirtualStickFlightControlData:ctrlData withCompletion:nil];
     }
 }
+
+
 
 
 #pragma mark DJISDKManagerDelegate Method
@@ -367,6 +443,7 @@
 
 
 
+
 #pragma mark - DJIBaseProductDelegate Method
 
 -(void) componentWithKey:(NSString *)key changedFrom:(DJIBaseComponent *)oldComponent to:(DJIBaseComponent *)newComponent {
@@ -378,6 +455,7 @@
         }
     }
 }
+
 
 
 
@@ -410,12 +488,17 @@
     
 }
 
-#pragma mark - DJI Simulator Delegate
+
+
+
+#pragma mark -DJI Simulator Delegate
 
 -(void)simulator:(DJISimulator *)simulator updateSimulatorState:(DJISimulatorState *)state {
     [self.simulatorStateLabel setHidden:NO];
     self.simulatorStateLabel.text = [NSString stringWithFormat:@"Yaw: %0.2f Pitch: %0.2f, Roll: %0.2f\n PosX: %0.2f PosY: %0.2f PosZ: %0.2f", state.yaw, state.pitch, state.roll, state.positionX, state.positionY, state.positionZ];
 }
+
+
 
 
 #pragma mark - IBAction Methods
