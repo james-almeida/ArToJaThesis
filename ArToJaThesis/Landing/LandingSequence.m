@@ -21,6 +21,13 @@
 }
 
 + (UIImage*) takeSnapshot: (DJICamera*) camera {
+    // align gimbal
+    
+    // take picture
+    [camera setCameraMode:DJICameraModeShootPhoto withCompletion:nil];
+    [camera startShootPhoto:DJICameraShootPhotoModeSingle withCompletion:nil];
+    
+    // download picture
     
     return NULL;
 }
@@ -47,10 +54,9 @@
     
     double getScale = [self getScale:height];
     
-    
     // move drone
-    // errX * getScale
-    // errY * getScale
+    double moveX = errX * getScale;
+    double moveY = errY * getScale;
     
     // decrease height
 }
