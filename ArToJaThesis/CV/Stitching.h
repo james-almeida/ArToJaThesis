@@ -10,7 +10,7 @@
 
 @interface Stitching : NSObject
 
-+ (bool) stitchImageWithArray:(NSMutableArray*)imageArray andResult:(cv::Mat &) result;
+//+ (bool) stitchImageWithArray:(NSMutableArray*)imageArray andResult:(cv::Mat) result;
 + (NSArray*) findTargetCoordinates:(UIImage*) rawImage;
 
 @end

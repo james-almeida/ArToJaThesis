@@ -45,6 +45,7 @@
     return true;
 }
 
+// TODO: use cv::function rather than cvFunction?
 + (NSArray*) findTargetCoordinates:(UIImage*) rawImage {
     
     // compress image

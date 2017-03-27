@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0DA35D3D4A8BF56C249CC0F9 /* libPods-ArToJaThesis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0436B094E5E5D0CA3EA7275C /* libPods-ArToJaThesis.a */; };
+		29660DB21E899B55006E406D /* LandingSequence.m in Sources */ = {isa = PBXBuildFile; fileRef = 29660DB11E899B55006E406D /* LandingSequence.m */; };
 		297B30F11E880AD00041DE62 /* OpenCVConversion.mm in Sources */ = {isa = PBXBuildFile; fileRef = 297B30F01E880AD00041DE62 /* OpenCVConversion.mm */; };
 		297B30F71E880AE30041DE62 /* Stitching.mm in Sources */ = {isa = PBXBuildFile; fileRef = 297B30F41E880AE30041DE62 /* Stitching.mm */; };
 		297B30F81E880AE30041DE62 /* StitchingWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 297B30F51E880AE30041DE62 /* StitchingWrapper.cpp */; };
@@ -74,6 +75,8 @@
 /* Begin PBXFileReference section */
 		0436B094E5E5D0CA3EA7275C /* libPods-ArToJaThesis.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ArToJaThesis.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		14520859EE43EB9E81CFAA5B /* Pods-ArToJaThesis.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ArToJaThesis.release.xcconfig"; path = "Pods/Target Support Files/Pods-ArToJaThesis/Pods-ArToJaThesis.release.xcconfig"; sourceTree = "<group>"; };
+		29660DB11E899B55006E406D /* LandingSequence.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LandingSequence.m; path = Landing/LandingSequence.m; sourceTree = "<group>"; };
+		29660DB41E899B8A006E406D /* LandingSequence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LandingSequence.h; path = Landing/LandingSequence.h; sourceTree = "<group>"; };
 		297B30EE1E8808FF0041DE62 /* PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
 		297B30EF1E880AD00041DE62 /* OpenCVConversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenCVConversion.h; path = CV/OpenCVConversion.h; sourceTree = "<group>"; };
 		297B30F01E880AD00041DE62 /* OpenCVConversion.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OpenCVConversion.mm; path = CV/OpenCVConversion.mm; sourceTree = "<group>"; };
@@ -134,6 +137,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		29660DB31E899B5E006E406D /* Landing */ = {
+			isa = PBXGroup;
+			children = (
+				29660DB11E899B55006E406D /* LandingSequence.m */,
+				29660DB41E899B8A006E406D /* LandingSequence.h */,
+			);
+			name = Landing;
+			sourceTree = "<group>";
+		};
 		297B30F21E880AD50041DE62 /* CV */ = {
 			isa = PBXGroup;
 			children = (
@@ -183,6 +195,7 @@
 				B30237D31E86FC340009D82C /* Frameworks */,
 				B302370D1E86DFAF0009D82C /* DJICameraViewController.h */,
 				B302370E1E86DFAF0009D82C /* DJICameraViewController.m */,
+				29660DB31E899B5E006E406D /* Landing */,
 				B30237DE1E86FFE10009D82C /* AppDelegate.h */,
 				B30237DF1E86FFE10009D82C /* AppDelegate.m */,
 				297B30EE1E8808FF0041DE62 /* PrefixHeader.pch */,
@@ -464,6 +477,7 @@
 				297B30F11E880AD00041DE62 /* OpenCVConversion.mm in Sources */,
 				B30237E61E86FFE20009D82C /* VirtualStickView.m in Sources */,
 				B30236DC1E86DBD00009D82C /* main.m in Sources */,
+				29660DB21E899B55006E406D /* LandingSequence.m in Sources */,
 				B30237E51E86FFE10009D82C /* DemoUtility.m in Sources */,
 				B302370F1E86DFAF0009D82C /* DJICameraViewController.m in Sources */,
 				B30237E41E86FFE10009D82C /* AppDelegate.m in Sources */,
