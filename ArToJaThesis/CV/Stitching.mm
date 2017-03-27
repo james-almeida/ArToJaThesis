@@ -45,7 +45,6 @@
     return true;
 }
 
-// TODO: use cv::function rather than cvFunction?
 + (NSArray*) findTargetCoordinates:(UIImage*) rawImage {
     
     // compress image
@@ -67,7 +66,7 @@
     cv::inRange(hsvImage, cv::Scalar(110, 150, 150), cv::Scalar(130, 255, 255), blueMask);
     cv::inRange(hsvImage, cv::Scalar(-5, 150, 150), cv::Scalar(5, 150, 150), redMask);
     
-//    if ((blueMask == nil) || (redMask == nil)) return NULL;
+    if (blueMask.empty() || redMask.empty()) return NULL;
     
     cv::add(blueMask, redMask, sumMask);
     
@@ -92,28 +91,32 @@
     cv::filter2D(laplaceImage, filteredImage, -1, kernel);  // kernel or &kernel?
     
     // 5. find index of max value
-    NSInteger rows = filteredImage.rows;
-    NSInteger cols = filteredImage.cols;
+    double minVal, maxVal;
+    cv::Point minPoint, maxPoint;
+    cv::minMaxLoc(filteredImage, &minVal, &maxVal, &minPoint, &maxPoint, cv::noArray());
     
-    NSInteger xmax, ymax, maxval;
-    xmax = -1;
-    ymax = -1;
-    maxval = 0;
+//    NSInteger rows = filteredImage.rows;
+//    NSInteger cols = filteredImage.cols;
+//    
+//    NSInteger xmax, ymax, maxval;
+//    xmax = -1;
+//    ymax = -1;
+//    maxval = 0;
+//    
+//    for (int i = 0; i < rows; i++) {
+//        for (int j = 0; j < cols; j++) {
+//            if (filteredImage.at<double>(i,j) > maxval) {
+//                xmax = i;
+//                ymax = j;
+//            }
+//        }
+//    }
     
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
-            if (filteredImage.at<double>(i,j) > maxval) {
-                xmax = i;
-                ymax = j;
-            }
-        }
-    }
-    
-    if (xmax == -1)
-        return NULL;
+//    if (maxPoint.x == -1)
+//        return NULL;
     
     // return result, or null
-    return @[[NSNumber numberWithInteger:xmax], [NSNumber numberWithInteger:ymax]];
+    return @[[NSNumber numberWithInteger:maxPoint.x], [NSNumber numberWithInteger:maxPoint.y]];
 }
 
 
