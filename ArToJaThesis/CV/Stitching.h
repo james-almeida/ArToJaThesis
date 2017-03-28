@@ -12,5 +12,7 @@
 
 //+ (bool) stitchImageWithArray:(NSMutableArray*)imageArray andResult:(cv::Mat) result;
 + (NSArray*) findTargetCoordinates:(UIImage*) rawImage;
++ (UIImage*) getRedMask:(UIImage*) rawImage;
++ (UIImage *)imageWithColor:(UIImage*)image location:(NSArray*) coords;
 
 @end

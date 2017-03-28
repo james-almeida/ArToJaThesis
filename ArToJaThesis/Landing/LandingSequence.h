@@ -13,7 +13,7 @@
 
 @interface LandingSequence : NSObject
 
-+ (void) landDrone:(DJIFlightControllerCurrentState*) droneState camera:(DJICamera*) camera;
++ (void) landDrone:(DJIFlightControllerCurrentState*) droneState drone:(DJIAircraft*) drone;
 + (bool) isLanded: (DJIFlightControllerCurrentState*) droneState ; 
     
 @end

@@ -11,22 +11,26 @@
 #import "DemoUtility.h"
 #import <DJISDK/DJISDK.h>
 #import <VideoPreviewer/VideoPreviewer.h>
+#import "LandingSequence.h"
+#import "Stitching.h"
 
 @interface DJICameraViewController ()<DJICameraDelegate, DJISDKManagerDelegate, DJIBaseProductDelegate, DJISimulatorDelegate>
 
 @property (weak, nonatomic) IBOutlet UIButton *captureBtn;
 @property (weak, nonatomic) IBOutlet UIButton *recordBtn;
+@property (weak, nonatomic) IBOutlet UIButton *processBtn;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *changeWorkModeSegmentControl;
 @property (weak, nonatomic) IBOutlet UIView *fpvPreviewView;
 @property (assign, nonatomic) BOOL isRecording;
 @property (weak, nonatomic) IBOutlet UILabel *currentRecordTimeLabel;
+@property (weak, nonatomic) IBOutlet UIImageView* imgView;
+@property (weak, nonatomic) IBOutlet UITextView* coordTextView;
+
+
 
 - (IBAction)captureAction:(id)sender;
 - (IBAction)recordAction:(id)sender;
 - (IBAction)changeWorkModeAction:(id)sender;
-
-
-
 
 @property(nonatomic, weak) IBOutlet VirtualStickView *virtualStickLeft;
 @property(nonatomic, weak) IBOutlet VirtualStickView *virtualStickRight;
@@ -62,12 +66,16 @@
     [self registerApp];
 }
 
+
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self.currentRecordTimeLabel setHidden:YES];
     
     self.title = @"DJISimulator Demo";
     
+    self.imgView.image = [UIImage imageNamed: @"target2"];
+
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     [notificationCenter addObserver: self
                            selector: @selector (onStickChanged:)
@@ -515,6 +523,19 @@
         }];
     }
     
+}
+- (IBAction)processAction:(id)sender {
+//    __weak DJICameraViewController *weakSelf = self;
+    UIImage* target = [UIImage imageNamed: @"target2"];
+    NSArray* coords = [Stitching findTargetCoordinates:target];
+    UIImage* result = [Stitching getRedMask:target];
+    
+    NSString * outputString = [coords description];
+    self.coordTextView.text = outputString;
+    
+//    UIImage* colored = [Stitching imageWithColor:result location:coords];
+    
+    self.imgView.image = result;
 }
 
 - (IBAction)recordAction:(id)sender {
