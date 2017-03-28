@@ -7,7 +7,7 @@
 //
 
 
-#include "stitchingWrapper.h"
+#include "StitchingWrapper.h"
 #include "opencv2/highgui/highgui.hpp"
 //#include "opencv2/stitching/stitcher.hpp"
 

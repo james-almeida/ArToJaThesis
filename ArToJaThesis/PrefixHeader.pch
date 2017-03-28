@@ -9,13 +9,19 @@
 #ifndef ArToJaThesis_PrefixHeader_pch
 #define ArToJaThesis_PrefixHeader_pch
 
-#ifdef __cplusplus
-    #import <opencv2/opencv.hpp>
-#endif
+    #ifdef __cplusplus
 
-#ifdef __OBJC__
-    #import <UIKit/UIKit.h>
-    #import <Foundation/Foundation.h>
-#endif
+        // get rid of xcode's documentation warnings
+        #pragma clang diagnostic push
+        #pragma clang diagnostic ignored "-Wdocumentation"
+            #import <opencv2/opencv.hpp>
+        #pragma clang pop
+
+    #endif
+
+    #ifdef __OBJC__
+        #import <UIKit/UIKit.h>
+        #import <Foundation/Foundation.h>
+    #endif
 
 #endif
