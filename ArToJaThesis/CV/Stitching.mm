@@ -52,8 +52,9 @@
     // convert to cv::Mat datatype
     // http://stackoverflow.com/questions/10254141/how-to-convert-from-cvmat-to-uiimage-in-objective-c/10254561
     cv::Mat compressedMat;
-    UIImageToMat(compressedUIImage, compressedMat);//[OpenCVConversion cvMat3FromUIImage:compressedUIImage];
-
+    //    UIImageToMat(compressedUIImage, compressedMat); //[OpenCVConversion cvMat3FromUIImage:compressedUIImage];
+    UIImageToMat(rawImage, compressedMat); //[OpenCVConversion cvMat3FromUIImage:compressedUIImage];
+    
     // steps to find target
     // 1. convert to HSV
     cv::Mat hsvImage;
@@ -63,8 +64,8 @@
     
     cv::Mat redMask, blueMask, sumMask;
     
-    cv::inRange(hsvImage, cv::Scalar(110, 150, 150), cv::Scalar(130, 255, 255), redMask); // flip bc BGR
-    cv::inRange(hsvImage, cv::Scalar(-10, 150, 150), cv::Scalar(10, 255, 255), blueMask);
+    cv::inRange(hsvImage, cv::Scalar(110, 170, 170), cv::Scalar(130, 255, 255), redMask); // flip bc BGR
+    cv::inRange(hsvImage, cv::Scalar(-10, 170, 170), cv::Scalar(10, 255, 255), blueMask);
     
     if (blueMask.empty() || redMask.empty()) return NULL;
     
@@ -72,9 +73,28 @@
     
     // 3. laplacian for sum
     cv::Mat laplaceImage;
-    cv::Laplacian(sumMask, laplaceImage, -1);
+    cv::Laplacian(sumMask, laplaceImage, -1, 15, 1, 0, cv::BORDER_DEFAULT);
+    laplaceImage = laplaceImage / 2;
     
-    return MatToUIImage(laplaceImage);
+
+    int n = 30;
+    int m = 5;
+
+    cv::Mat kernel = cv::Mat(n, n, CV_64F, -1.0);
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            kernel.at<double>(i,j) = -1.0;
+            if (i < n/2 + m && i > n/2 - m)
+                kernel.at<double>(i,j) = 1.0;
+            if (j < n/2 + m && j > n/2 - m)
+                kernel.at<double>(i,j) = 1.0;
+        }
+    }
+    
+    cv::Mat filteredImage;
+    cv::filter2D(laplaceImage, filteredImage, -1, kernel);
+    
+    return MatToUIImage(filteredImage);
 }
 
 
@@ -87,7 +107,9 @@
     // convert to cv::Mat datatype
     // http://stackoverflow.com/questions/10254141/how-to-convert-from-cvmat-to-uiimage-in-objective-c/10254561
     cv::Mat compressedMat;
-    UIImageToMat(compressedUIImage, compressedMat); //[OpenCVConversion cvMat3FromUIImage:compressedUIImage];
+//    UIImageToMat(compressedUIImage, compressedMat); //[OpenCVConversion cvMat3FromUIImage:compressedUIImage];
+    UIImageToMat(rawImage, compressedMat); //[OpenCVConversion cvMat3FromUIImage:compressedUIImage];
+
     
     // steps to find target
     // 1. convert to HSV
@@ -98,8 +120,8 @@
     
     cv::Mat redMask, blueMask, sumMask;
     
-    cv::inRange(hsvImage, cv::Scalar(110, 150, 150), cv::Scalar(130, 255, 255), redMask); // flip bc BGR
-    cv::inRange(hsvImage, cv::Scalar(-10, 150, 150), cv::Scalar(10, 255, 255), blueMask);
+    cv::inRange(hsvImage, cv::Scalar(110, 170, 170), cv::Scalar(130, 255, 255), redMask); // flip bc BGR
+    cv::inRange(hsvImage, cv::Scalar(-10, 170, 170), cv::Scalar(10, 255, 255), blueMask);
     
     if (blueMask.empty() || redMask.empty()) return NULL;
     
@@ -107,51 +129,85 @@
     
     // 3. laplacian for sum
     cv::Mat laplaceImage;
-    cv::Laplacian(sumMask, laplaceImage, -1);
+    cv::Laplacian(sumMask, laplaceImage, -1, 15, 1, 0, cv::BORDER_DEFAULT);
+    laplaceImage = laplaceImage / 2.0;
     
     // 4. '+' shaped kernel
-    int n = 50;
+    int n = 30;
     int m = 5;
-    cv::Mat kernel = cv::Mat(n, n, CV_64F, -1.0);
+
+
+    cv::Mat kernel = cv::Mat(n, n, CV_32S);
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
-            if (i < n + m && i > n - m)
-                kernel.at<double>(i,j) = 1;
-            if (j < n + m && j > n - m)
-                kernel.at<double>(i,j) = 1;
+            kernel.at<int>(i,j) = -1;
+            if (i < n/2 + m && i > n/2 - m)
+                kernel.at<int>(i,j) = 1;
+            if (j < n/2 + m && j > n/2 - m)
+                kernel.at<int>(i,j) = 1;
         }
     }
+    
+    
+//    for (int i = 0; i < n; i++) {
+//        NSMutableString *line = [NSMutableString stringWithCapacity:80];
+//        for (int j = 0; j < n; j++) {
+//            [line appendFormat:@"%d ", kernel.at<int>(i,j)];
+//        }
+//        NSLog(line);
+//    }
     
     cv::Mat filteredImage;
-    cv::filter2D(laplaceImage, filteredImage, -1, kernel);  // kernel or &kernel?
+    cv::filter2D(laplaceImage, filteredImage, -1, kernel);
     
     // 5. find index of max value
-//    double minVal, maxVal;
-//    cv::Point minPoint, maxPoint;
-//    cv::minMaxLoc(filteredImage, &minVal, &maxVal, &minPoint, &maxPoint, cv::noArray());
+    double minVal, maxVal, maxVal2;
+    cv::Point minPoint, maxPoint;
+    cv::minMaxLoc(filteredImage, &minVal, &maxVal, &minPoint, &maxPoint, cv::noArray());
+//
+    int idx[2];
+    cv::minMaxIdx(filteredImage, NULL, &maxVal2, NULL, idx, cv::noArray());
     
-    NSInteger rows = filteredImage.rows;
-    NSInteger cols = filteredImage.cols;
+//    NSInteger rows = filteredImage.rows;
+//    NSInteger cols = filteredImage.cols;
+//    
+//    NSInteger xmax, ymax, maxval;
+//    xmax = -1;
+//    ymax = -1;
+//    maxval = -1;
+//    
+//    for (int i = 0; i < rows; i++) {
+//        for (int j = 0; j < cols; j++) {
+//            if (filteredImage.at<long>(j,i) > maxval) {
+//                xmax = i;
+//                ymax = j;
+//                maxval = filteredImage.at<long>(j,i);
+//                NSLog(@"New Max: %dl, at: (%d, %d)", maxval, xmax, ymax);
+//            }
+//        }
+//    }
     
-    NSInteger xmax, ymax, maxval;
-    xmax = -1;
-    ymax = -1;
-    maxval = 0;
+//    if (xmax == -1)
+//        return NULL;
+//    
+//    // return result, or null
+    return @[[NSNumber numberWithInteger:minPoint.x], [NSNumber numberWithInteger:minPoint.y], [NSNumber numberWithInteger:minVal],
+             [NSNumber numberWithInteger:maxPoint.x], [NSNumber numberWithInteger:maxPoint.y], [NSNumber numberWithInteger:maxVal],
+             [NSNumber numberWithInteger:idx[0]], [NSNumber numberWithInteger:idx[1]], [NSNumber numberWithInteger:maxVal2]];
     
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
-            if (filteredImage.at<double>(i,j) > maxval) {
-                xmax = i;
-                ymax = j;
-            }
-        }
-    }
     
-    if (xmax == -1)
-        return NULL;
+//    int p = 2;
+//    cv::Mat k2 = cv::Mat(p,p, CV_64F, 0.0);
+//    kernel.at<double>(0,1) = 255;
+//    kernel.at<double>(1,0) = 255;
+//        return @[[NSNumber numberWithInteger:kernel.at<double>(0,1)], [NSNumber numberWithInteger:kernel.at<double>(0,0)], [NSNumber numberWithInteger:kernel.at<double>(1,0)]];
     
-    // return result, or null
-    return @[[NSNumber numberWithInteger:xmax], [NSNumber numberWithInteger:ymax]];
+    
+//    return @[[NSNumber numberWithInteger:maxPoint.x], [NSNumber numberWithInteger:maxPoint.y], [NSNumber numberWithInteger:maxVal]];
+    
+//    return @[[NSNumber numberWithInteger:idx[0]], [NSNumber numberWithInteger:idx[1]], [NSNumber numberWithInteger:maxVal]];
+
+
 }
 
 + (UIImage *)imageWithColor:(UIImage*)image location:(NSArray*) coords{

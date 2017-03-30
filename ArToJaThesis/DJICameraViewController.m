@@ -74,7 +74,7 @@
     
     self.title = @"DJISimulator Demo";
     
-    self.imgView.image = [UIImage imageNamed: @"target2"];
+    self.imgView.image = [UIImage imageNamed: @"target"];
 
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     [notificationCenter addObserver: self
@@ -526,7 +526,7 @@
 }
 - (IBAction)processAction:(id)sender {
 //    __weak DJICameraViewController *weakSelf = self;
-    UIImage* target = [UIImage imageNamed: @"target2"];
+    UIImage* target = [UIImage imageNamed: @"target"];
     NSArray* coords = [Stitching findTargetCoordinates:target];
     UIImage* result = [Stitching getRedMask:target];
     
