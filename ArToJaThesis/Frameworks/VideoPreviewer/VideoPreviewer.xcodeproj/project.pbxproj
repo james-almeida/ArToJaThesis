@@ -39,8 +39,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		02532EA21C6477290056CB55 /* LB2AUDHackParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LB2AUDHackParser.h; path = VideoPreviewer/Lb2AUDHack/LB2AUDHackParser.h; sourceTree = "<group>"; };
-		02532EA31C6477290056CB55 /* LB2AUDHackParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LB2AUDHackParser.m; path = VideoPreviewer/Lb2AUDHack/LB2AUDHackParser.m; sourceTree = "<group>"; };
+		02532EA21C6477290056CB55 /* LB2AUDHackParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LB2AUDHackParser.h; path = VideoPreviewer/LB2AUDHackParser.h; sourceTree = "<group>"; };
+		02532EA31C6477290056CB55 /* LB2AUDHackParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LB2AUDHackParser.m; path = VideoPreviewer/LB2AUDHackParser.m; sourceTree = "<group>"; };
 		02A543FD1C3C51CB0083C11B /* VideoPreviewer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VideoPreviewer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		02EE4FD21C3D9B55006783E5 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = VideoPreviewer/Info.plist; sourceTree = "<group>"; };
 		02EE4FD31C3D9B55006783E5 /* MovieGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MovieGLView.h; path = VideoPreviewer/MovieGLView.h; sourceTree = "<group>"; };
@@ -56,8 +56,8 @@
 		B828932C1C9867AB00CCBD3B /* SoftwareDecodeProcessor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SoftwareDecodeProcessor.m; path = VideoPreviewer/SoftwareDecodeProcessor.m; sourceTree = "<group>"; };
 		B828932D1C9867AB00CCBD3B /* VideoPreviewerQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VideoPreviewerQueue.h; path = VideoPreviewer/VideoPreviewerQueue.h; sourceTree = "<group>"; };
 		B828932E1C9867AB00CCBD3B /* VideoPreviewerQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VideoPreviewerQueue.m; path = VideoPreviewer/VideoPreviewerQueue.m; sourceTree = "<group>"; };
-		B83DC2431D8FB13B003461D3 /* DJIVideoPresentViewAdjustHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DJIVideoPresentViewAdjustHelper.h; sourceTree = "<group>"; };
-		B83DC2441D8FB13B003461D3 /* DJIVideoPresentViewAdjustHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DJIVideoPresentViewAdjustHelper.m; sourceTree = "<group>"; };
+		B83DC2431D8FB13B003461D3 /* DJIVideoPresentViewAdjustHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DJIVideoPresentViewAdjustHelper.h; path = VideoPreviewer/DJIVideoPresentViewAdjustHelper.h; sourceTree = "<group>"; };
+		B83DC2441D8FB13B003461D3 /* DJIVideoPresentViewAdjustHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DJIVideoPresentViewAdjustHelper.m; path = VideoPreviewer/DJIVideoPresentViewAdjustHelper.m; sourceTree = "<group>"; };
 		B83DC2471D8FB148003461D3 /* DJIJpegStreamImageDecoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DJIJpegStreamImageDecoder.h; path = VideoPreviewer/DJIJpegStreamImageDecoder.h; sourceTree = "<group>"; };
 		B83DC2481D8FB148003461D3 /* DJIJpegStreamImageDecoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DJIJpegStreamImageDecoder.m; path = VideoPreviewer/DJIJpegStreamImageDecoder.m; sourceTree = "<group>"; };
 		B83DC24B1D8FB298003461D3 /* VideoPreviewerMacros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = VideoPreviewerMacros.h; path = VideoPreviewer/VideoPreviewerMacros.h; sourceTree = "<group>"; };
@@ -93,7 +93,8 @@
 		02A543F31C3C51CB0083C11B = {
 			isa = PBXGroup;
 			children = (
-				B83DC2421D8FB13B003461D3 /* Helper */,
+				B83DC2431D8FB13B003461D3 /* DJIVideoPresentViewAdjustHelper.h */,
+				B83DC2441D8FB13B003461D3 /* DJIVideoPresentViewAdjustHelper.m */,
 				B83DC2471D8FB148003461D3 /* DJIJpegStreamImageDecoder.h */,
 				B83DC2481D8FB148003461D3 /* DJIJpegStreamImageDecoder.m */,
 				B8FF34CE1CF99B8F00491E84 /* DJIStreamCommon.h */,
@@ -141,16 +142,6 @@
 				02EE50491C3D9BC3006783E5 /* CoreMedia.framework */,
 			);
 			name = libs;
-			sourceTree = "<group>";
-		};
-		B83DC2421D8FB13B003461D3 /* Helper */ = {
-			isa = PBXGroup;
-			children = (
-				B83DC2431D8FB13B003461D3 /* DJIVideoPresentViewAdjustHelper.h */,
-				B83DC2441D8FB13B003461D3 /* DJIVideoPresentViewAdjustHelper.m */,
-			);
-			name = Helper;
-			path = VideoPreviewer/Helper;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

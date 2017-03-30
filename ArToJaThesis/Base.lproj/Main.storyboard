@@ -81,6 +81,14 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Nvy-vk-4R9">
+                                <rect key="frame" x="131" y="96" width="112" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="START MISSION"/>
+                                <connections>
+                                    <action selector="onStartButtonClicked:" destination="BYZ-38-t0r" eventType="touchUpInside" id="L9T-j7-EIB"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
@@ -89,8 +97,11 @@
                         <outlet property="changeWorkModeSegmentControl" destination="YBM-pK-fqd" id="apg-zS-naN"/>
                         <outlet property="coordTextView" destination="UMe-Ub-4jb" id="RJK-pB-VKw"/>
                         <outlet property="currentRecordTimeLabel" destination="5Ur-za-Ahy" id="K3s-xW-ghq"/>
+                        <outlet property="fpvPreviewView" destination="8bC-Xf-vdC" id="cFM-fz-FSP"/>
                         <outlet property="imgView" destination="Zx0-ws-ohA" id="Yk4-dX-DKc"/>
+                        <outlet property="processBtn" destination="Ryj-Dt-nes" id="CNk-NH-l9n"/>
                         <outlet property="recordBtn" destination="oje-wz-Wfl" id="T1q-lY-2eZ"/>
+                        <outlet property="startButton" destination="Nvy-vk-4R9" id="Otr-Eb-aiS"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

@@ -10,11 +10,11 @@
 #import "VirtualStickView.h"
 #import "DemoUtility.h"
 #import <DJISDK/DJISDK.h>
-#import <VideoPreviewer/VideoPreviewer.h>
+#import "Frameworks/VideoPreviewer/VideoPreviewer/VideoPreviewer.h"
 #import "LandingSequence.h"
 #import "Stitching.h"
 
-@interface DJICameraViewController ()<DJICameraDelegate, DJISDKManagerDelegate, DJIBaseProductDelegate, DJISimulatorDelegate>
+@interface DJICameraViewController ()<DJICameraDelegate, DJISDKManagerDelegate, DJIBaseProductDelegate, DJISimulatorDelegate, DJIFlightControllerDelegate>
 
 @property (weak, nonatomic) IBOutlet UIButton *captureBtn;
 @property (weak, nonatomic) IBOutlet UIButton *recordBtn;
@@ -48,6 +48,13 @@
 - (IBAction) onTakeoffButtonClicked:(id)sender;
 - (IBAction) onSimulatorButtonClicked:(id)sender;
 - (IBAction) onLandButtonClicked:(id)sender;
+
+@property (weak, nonatomic) IBOutlet UIButton *startButton;
+- (IBAction) onStartButtonClicked:(id)sender;
+
+@property(nonatomic, assign) CLLocationCoordinate2D droneLocation;
+@property(nonatomic, assign) double batteryRemaining;
+
 
 
 @end
@@ -181,6 +188,137 @@
         [self.simulatorButton setTitle:@"Stop Simulator" forState:UIControlStateNormal];
     }
 }
+
+
+/* Should perform the following upon tapping "START MISSION":
+ * * * 1) Fetch flight controller without error
+ * * * 2) Set the control modes for yaw, pitch, roll, and vertical control
+ * * * 3) Put drone in virtual stick control mode
+ */
+- (IBAction)onStartButtonClicked:(id)sender {
+    DJIFlightController* fc = [DemoUtility fetchFlightController];
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil];
+
+    if (fc) {
+        fc.yawControlMode = DJIVirtualStickYawControlModeAngularVelocity;
+        fc.rollPitchControlMode = DJIVirtualStickRollPitchControlModeVelocity;
+        fc.verticalControlMode = DJIVirtualStickVerticalControlModeVelocity;
+        
+        [self autoEnterVirtualStickControl:fc];
+        
+    }
+    else
+    {
+        [DemoUtility showAlertViewWithTitle:nil message:@"Component not exist." cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
+    }
+    
+}
+
+
+/* This method is called initially when "START MISSION" is tapped. Additionally, every time the drone turns off and on again (signaled by battery charge drastically increasing). 
+ * Should perform the following upon being called:
+ * * * 1) Enable virtual stick control mode without failure
+ * * *      -> If there is error, continue to call self until success
+ * * * 2) Begin takeoff/flight sequence
+ */
+- (void) autoEnterVirtualStickControl:(DJIFlightController*) fc {
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil];
+    
+    [fc enableVirtualStickControlModeWithCompletion:^(NSError *error) {
+        if (error) {
+            [DemoUtility showAlertViewWithTitle:nil message:[NSString stringWithFormat:@"Enter Virtual Stick Mode Failed: %@", error.description] cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
+            double delayInSeconds = 10.0;
+            dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+            dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+                [self autoEnterVirtualStickControl:fc];
+            });
+        }
+        else
+        {
+            [DemoUtility showAlertViewWithTitle:nil message:@"Enter Virtual Stick Mode:Succeeded, attempting takeoff." cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
+            [self autoTakeoff:fc];
+        }
+    }];
+
+}
+
+/* Will be called automatically by autoEnterVirtualStickControl().
+ * Should perform the following upon being called:
+ * * * 1) Attempt to take off
+ * * *      -> If there is error, continue to call self until success
+ * * * 2) Call the virtualPilot method
+ */
+- (void) autoTakeoff:(DJIFlightController*) fc {
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil];
+    
+    [fc takeoffWithCompletion:^(NSError *error) {
+        if (error) {
+            [DemoUtility showAlertViewWithTitle:nil message:[NSString stringWithFormat:@"Takeoff: %@", error.description] cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
+            double delayInSeconds = 10.0;
+            dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+            dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+                [self autoTakeoff:fc];
+            });
+                
+        } else {
+            [DemoUtility showAlertViewWithTitle:nil message:@"Takeoff Success, beginning virtual flight." cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
+            [self virtualPilot:fc];
+        }
+    }];
+
+}
+
+/* Will be called automatically after a successful takeoff.
+ * Should perform the following upon being called:
+ * * * 1) Check battery level
+ * * *      -> If less than 20%, begin landing sequence
+ * * * 2) Fly to designated height
+ * * * 3) Set self to correct orientation (TESTING REQUIRED)
+ * * * 4) Begin flight loop --> While battery remains above 20%,
+ * * *      -  Fly in each direction at 1/20 max speed for 10 seconds
+ * * *      -  Fly in each direction at 1/20 max speed for 10 seconds
+ * * *      -  Fly in each direction at 1/20 max speed for 10 seconds
+ 
+ */
+- (void) virtualPilot:(DJIFlightController*) fc {
+    double commandDelayInSeconds = 10;
+    double stickDelayInSeconds = 0.1;
+    dispatch_time_t commandDelay = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(commandDelayInSeconds * NSEC_PER_SEC));
+    dispatch_time_t stickDelay = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(stickDelayInSeconds * NSEC_PER_SEC));
+    
+    // no idea how to get the state
+    // DJIFlightControllerCurrentState* state = fc.delegate
+    if (self.batteryRemaining < 0.20) {
+        // Begin landing sequence
+        // [LandingSequence landDrone: drone:<#(DJIAircraft *)#>]
+    }
+    
+    // Elevate drone for 3 seconds at a rate of 10Hz
+    for (int i=0; i<30; i++) {
+        dispatch_after(stickDelay, dispatch_get_main_queue(), ^(void){
+            [self leftStickUp];
+        });
+    }
+    
+    // Wait for 10 seconds, then move forward for 3 seconds
+    dispatch_after(commandDelay, dispatch_get_main_queue(), ^(void){
+        for (int i=0; i<30; i++) {
+            dispatch_after(stickDelay, dispatch_get_main_queue(), ^(void){
+                [self rightStickUp];
+            });
+        }
+    });
+    
+    // Immediately land in place
+    for (int i=0; i<100; i++) {
+        dispatch_after(stickDelay, dispatch_get_main_queue(), ^(void){
+            [self leftStickDown];
+        });
+    }
+
+}
+
+
 
 -(IBAction) onEnterVirtualStickControlButtonClicked:(id)sender
 {
@@ -324,7 +462,7 @@
 {
     CGPoint dir;
     dir.x = 0;
-    dir.y = -0.1;
+    dir.y = -0.05;
     
     [self setThrottle:dir.y andYaw:dir.x];
 }
@@ -333,14 +471,14 @@
 {
     CGPoint dir;
     dir.x = 0;
-    dir.y = -0.1;
+    dir.y = -0.05;
     [self setXVelocity:-dir.y andYVelocity:dir.x];
 }
 
 - (void)leftStickRight
 {
     CGPoint dir;
-    dir.x = 0.1;
+    dir.x = 0.05;
     dir.y = 0;
     
     [self setThrottle:dir.y andYaw:dir.x];
@@ -349,7 +487,7 @@
 - (void)rightStickRight
 {
     CGPoint dir;
-    dir.x = 0.1;
+    dir.x = 0.05;
     dir.y = 0;
     [self setXVelocity:-dir.y andYVelocity:dir.x];
 }
@@ -358,7 +496,7 @@
 {
     CGPoint dir;
     dir.x = 0;
-    dir.y = 0.1;
+    dir.y = 0.05;
     
     [self setThrottle:dir.y andYaw:dir.x];
 }
@@ -367,14 +505,14 @@
 {
     CGPoint dir;
     dir.x = 0;
-    dir.y = 0.1;
+    dir.y = 0.05;
     [self setXVelocity:-dir.y andYVelocity:dir.x];
 }
 
 - (void)leftStickLeft
 {
     CGPoint dir;
-    dir.x = -0.1;
+    dir.x = -0.05;
     dir.y = 0;
     
     [self setThrottle:dir.y andYaw:dir.x];
@@ -383,7 +521,7 @@
 - (void)rightStickLeft
 {
     CGPoint dir;
-    dir.x = -0.1;
+    dir.x = -0.05;
     dir.y = 0;
     [self setXVelocity:-dir.y andYVelocity:dir.x];
 }
@@ -507,6 +645,14 @@
 }
 
 
+#pragma mark DJIFlightControllerDelegate
+
+- (void)flightController:(DJIFlightController *)fc didUpdateSystemState:(DJIFlightControllerCurrentState *)state
+{
+    self.droneLocation = state.aircraftLocation;
+    self.batteryRemaining = state.remainingBattery;
+    
+}
 
 
 #pragma mark - IBAction Methods
