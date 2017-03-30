@@ -81,6 +81,21 @@
                                 <rect key="frame" x="16" y="138" width="343" height="286"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xRJ-uh-G91">
+                                <rect key="frame" x="131" y="85" width="112" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="START MISSION"/>
+                                <connections>
+                                    <action selector="onStartButtonClicked:" destination="BYZ-38-t0r" eventType="touchUpInside" id="N1I-px-qm9"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hdd-6X-OnM">
+                                <rect key="frame" x="131" y="109" width="112" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
@@ -91,8 +106,10 @@
                         <outlet property="currentRecordTimeLabel" destination="5Ur-za-Ahy" id="K3s-xW-ghq"/>
                         <outlet property="fpvPreviewView" destination="8bC-Xf-vdC" id="cFM-fz-FSP"/>
                         <outlet property="imgView" destination="Zx0-ws-ohA" id="Yk4-dX-DKc"/>
+                        <outlet property="missionStatus" destination="hdd-6X-OnM" id="bDU-bp-bG8"/>
                         <outlet property="processBtn" destination="Ryj-Dt-nes" id="CNk-NH-l9n"/>
                         <outlet property="recordBtn" destination="oje-wz-Wfl" id="T1q-lY-2eZ"/>
+                        <outlet property="startButton" destination="xRJ-uh-G91" id="CAn-lj-5f7"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
