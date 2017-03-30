@@ -70,10 +70,6 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Zx0-ws-ohA">
-                                <rect key="frame" x="67" y="224" width="240" height="218"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            </imageView>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" text="Found Coordinates:" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="UMe-Ub-4jb">
                                 <rect key="frame" x="67" y="481" width="240" height="121"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -81,14 +77,10 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Nvy-vk-4R9">
-                                <rect key="frame" x="131" y="96" width="112" height="30"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Zx0-ws-ohA">
+                                <rect key="frame" x="16" y="138" width="343" height="286"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="START MISSION"/>
-                                <connections>
-                                    <action selector="onStartButtonClicked:" destination="BYZ-38-t0r" eventType="touchUpInside" id="L9T-j7-EIB"/>
-                                </connections>
-                            </button>
+                            </imageView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
@@ -101,7 +93,6 @@
                         <outlet property="imgView" destination="Zx0-ws-ohA" id="Yk4-dX-DKc"/>
                         <outlet property="processBtn" destination="Ryj-Dt-nes" id="CNk-NH-l9n"/>
                         <outlet property="recordBtn" destination="oje-wz-Wfl" id="T1q-lY-2eZ"/>
-                        <outlet property="startButton" destination="Nvy-vk-4R9" id="Otr-Eb-aiS"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
