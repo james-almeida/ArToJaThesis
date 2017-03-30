@@ -107,6 +107,7 @@
     // drop 2 meters
 }
 
+
 + (void) landDrone:(DJIFlightControllerCurrentState*) droneState drone:(DJIAircraft*) drone {
     UIImage* snapshot;
     
