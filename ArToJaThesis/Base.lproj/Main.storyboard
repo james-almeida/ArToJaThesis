@@ -93,7 +93,6 @@
                         <outlet property="imgView" destination="Zx0-ws-ohA" id="Yk4-dX-DKc"/>
                         <outlet property="processBtn" destination="Ryj-Dt-nes" id="CNk-NH-l9n"/>
                         <outlet property="recordBtn" destination="oje-wz-Wfl" id="T1q-lY-2eZ"/>
-                        <outlet property="startButton" destination="Nvy-vk-4R9" id="Otr-Eb-aiS"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
