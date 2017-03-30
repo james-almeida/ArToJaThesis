@@ -318,6 +318,22 @@
 
 }
 
+/*
+ 
+ Initial TODO:
+    Test VirtualPilot v0.1 (figure out what directions/orientations mean and make notes
+        --> Does frequency work? Is it choppy or smooth control? Is it too slow?
+    Figure out how to get DJIFlightControllerCurrentState for Tony's methods
+        --> This is probably as simple as understanding how delegates work
+    With a firm understanding of directionality, write a more complex VirtualPilot
+        --> Adjust times/speeds for direction sticks
+        --> Make it fly in a square
+    Decide if we even need the VirtualStickView class (probably not)
+        --> Maybe salvage the timer out of it?
+    Clean up UI
+    Access photos from onboard SDK to process
+ */
+
 
 
 -(IBAction) onEnterVirtualStickControlButtonClicked:(id)sender
@@ -525,8 +541,6 @@
     dir.y = 0;
     [self setXVelocity:-dir.y andYVelocity:dir.x];
 }
-
-
 
 -(void) setThrottle:(float)y andYaw:(float)x
 {
