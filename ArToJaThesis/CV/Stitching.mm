@@ -78,16 +78,16 @@
     
 
     int n = 30;
-    int m = 5;
+    int m = 10;
 
-    cv::Mat kernel = cv::Mat(n, n, CV_64F, -1.0);
+    cv::Mat kernel = cv::Mat(n, n, CV_32F, -1.0);
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
-            kernel.at<double>(i,j) = -1.0;
+            kernel.at<float>(i,j) = -1.0;
             if (i < n/2 + m && i > n/2 - m)
-                kernel.at<double>(i,j) = 1.0;
+                kernel.at<float>(i,j) = 1.0;
             if (j < n/2 + m && j > n/2 - m)
-                kernel.at<double>(i,j) = 1.0;
+                kernel.at<float>(i,j) = 1.0;
         }
     }
     
@@ -118,7 +118,9 @@
     
     // 2. create mask for red & blue, sum together
     
-    cv::Mat redMask, blueMask, sumMask;
+    cv::Mat redMask = cv::Mat::zeros(hsvImage.rows, hsvImage.cols, CV_32S);
+    cv::Mat blueMask = cv::Mat::zeros(hsvImage.rows, hsvImage.cols, CV_32S);
+    cv::Mat sumMask = cv::Mat::zeros(hsvImage.rows, hsvImage.cols, CV_32S);
     
     cv::inRange(hsvImage, cv::Scalar(110, 170, 170), cv::Scalar(130, 255, 255), redMask); // flip bc BGR
     cv::inRange(hsvImage, cv::Scalar(-10, 170, 170), cv::Scalar(10, 255, 255), blueMask);
@@ -128,25 +130,26 @@
     cv::add(blueMask, redMask, sumMask);
     
     // 3. laplacian for sum
-    cv::Mat laplaceImage;
+    cv::Mat laplaceImage = cv::Mat::zeros(sumMask.rows, sumMask.cols, CV_32S);;
     cv::Laplacian(sumMask, laplaceImage, -1, 15, 1, 0, cv::BORDER_DEFAULT);
     laplaceImage = laplaceImage / 2.0;
     
     // 4. '+' shaped kernel
-    int n = 30;
-    int m = 5;
+    int n = 50;
+    int m = 8;
 
 
-    cv::Mat kernel = cv::Mat(n, n, CV_32S);
+    cv::Mat kernel = cv::Mat::zeros(n, n, CV_32F);
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
-            kernel.at<int>(i,j) = -1;
+            kernel.at<float>(i,j) = -1.0;
             if (i < n/2 + m && i > n/2 - m)
-                kernel.at<int>(i,j) = 1;
+                kernel.at<float>(i,j) = 1.0;
             if (j < n/2 + m && j > n/2 - m)
-                kernel.at<int>(i,j) = 1;
+                kernel.at<float>(i,j) = 1.0;
         }
     }
+    kernel = kernel / float(n * n);
     
     
 //    for (int i = 0; i < n; i++) {
@@ -157,8 +160,9 @@
 //        NSLog(line);
 //    }
     
-    cv::Mat filteredImage;
+    cv::Mat filteredImage; //= cv::Mat::zeros(laplaceImage.rows, laplaceImage.cols, CV_32F);
     cv::filter2D(laplaceImage, filteredImage, -1, kernel);
+//    filteredImage = filteredImage;
     
     // 5. find index of max value
     double minVal, maxVal, maxVal2;
@@ -168,32 +172,32 @@
     int idx[2];
     cv::minMaxIdx(filteredImage, NULL, &maxVal2, NULL, idx, cv::noArray());
     
-//    NSInteger rows = filteredImage.rows;
-//    NSInteger cols = filteredImage.cols;
-//    
-//    NSInteger xmax, ymax, maxval;
-//    xmax = -1;
-//    ymax = -1;
-//    maxval = -1;
-//    
-//    for (int i = 0; i < rows; i++) {
-//        for (int j = 0; j < cols; j++) {
-//            if (filteredImage.at<long>(j,i) > maxval) {
-//                xmax = i;
-//                ymax = j;
-//                maxval = filteredImage.at<long>(j,i);
+    NSInteger rows = filteredImage.rows;
+    NSInteger cols = filteredImage.cols;
+    
+    NSInteger xmax, ymax, maxval;
+    xmax = -1;
+    ymax = -1;
+    maxval = -1;
+    
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            if (filteredImage.at<char>(j,i) > maxval) {
+                xmax = i;
+                ymax = j;
+                maxval = filteredImage.at<char>(j,i);
 //                NSLog(@"New Max: %dl, at: (%d, %d)", maxval, xmax, ymax);
-//            }
-//        }
-//    }
+            }
+        }
+    }
     
 //    if (xmax == -1)
 //        return NULL;
 //    
 //    // return result, or null
-    return @[[NSNumber numberWithInteger:minPoint.x], [NSNumber numberWithInteger:minPoint.y], [NSNumber numberWithInteger:minVal],
-             [NSNumber numberWithInteger:maxPoint.x], [NSNumber numberWithInteger:maxPoint.y], [NSNumber numberWithInteger:maxVal],
-             [NSNumber numberWithInteger:idx[0]], [NSNumber numberWithInteger:idx[1]], [NSNumber numberWithInteger:maxVal2]];
+    return @[[NSNumber numberWithInteger:xmax], [NSNumber numberWithInteger:ymax], [NSNumber numberWithFloat:maxval],
+             [NSNumber numberWithInteger:maxPoint.x], [NSNumber numberWithInteger:maxPoint.y], [NSNumber numberWithFloat:maxVal],
+             [NSNumber numberWithInteger:idx[0]], [NSNumber numberWithInteger:idx[1]], [NSNumber numberWithInteger:maxVal2], [NSNumber numberWithChar:filteredImage.at<char>(452,0)], [NSNumber numberWithChar:filteredImage.at<char>(0,452)],[NSNumber numberWithChar:filteredImage.at<char>(452,452)]];
     
     
 //    int p = 2;
