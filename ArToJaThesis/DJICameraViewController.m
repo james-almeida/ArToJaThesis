@@ -55,7 +55,10 @@
 
 @property (weak, nonatomic) IBOutlet UIButton *startButton;
 - (IBAction) onStartButtonClicked:(id)sender;
+@property (strong, nonatomic) IBOutlet UILabel *missionStatus;
 
+
+@property(nonatomic, assign) DJIFlightControllerCurrentState* droneState;
 @property(nonatomic, assign) CLLocationCoordinate2D droneLocation;
 @property(nonatomic, assign) double batteryRemaining;
 
@@ -296,29 +299,33 @@
         // Begin landing sequence
         // [LandingSequence landDrone: drone:<#(DJIAircraft *)#>]
     }
+    _missionStatus.text = @"Elevating";
     
     // Elevate drone for 3 seconds at a rate of 10Hz
-    for (int i=0; i<30; i++) {
-        dispatch_after(stickDelay, dispatch_get_main_queue(), ^(void){
-            [self leftStickUp];
-        });
+    for (int i=0; i<10000; i++) {
+        [self leftStickUp];
     }
+    
+    [self bothSticksNeutral];
+    _missionStatus.text = @"Waiting to Move";
     
     // Wait for 10 seconds, then move forward for 3 seconds
-    dispatch_after(commandDelay, dispatch_get_main_queue(), ^(void){
-        for (int i=0; i<30; i++) {
-            dispatch_after(stickDelay, dispatch_get_main_queue(), ^(void){
-                [self rightStickUp];
-            });
-        }
-    });
-    
-    // Immediately land in place
-    for (int i=0; i<100; i++) {
-        dispatch_after(stickDelay, dispatch_get_main_queue(), ^(void){
-            [self leftStickDown];
-        });
+    _missionStatus.text = @"Moving";
+    for (int i=0; i<10000; i++) {
+        [self rightStickUp];
+        _missionStatus.text = @"Moving forward";
     }
+    _missionStatus.text = @"Done";
+//
+//    dispatch_after(commandDelay, dispatch_get_main_queue(), ^(void){
+//        // Immediately land in place
+//        _missionStatus.text = @"Landing";
+//        for (int i=0; i<1000; i++) {
+//            dispatch_after(stickDelay, dispatch_get_main_queue(), ^(void){
+//            [self leftStickDown];
+//        });
+//    }
+//    });
 
 }
 
@@ -478,11 +485,21 @@
     }
 }
 
+- (void)bothSticksNeutral
+{
+    CGPoint dir;
+    dir.x = 0;
+    dir.y = 0;
+    
+    [self setThrottle:dir.y andYaw:dir.x];
+    [self setXVelocity:-dir.y andYVelocity:dir.x];
+}
+
 - (void)leftStickUp
 {
     CGPoint dir;
     dir.x = 0;
-    dir.y = -0.05;
+    dir.y = -0.4;
     
     [self setThrottle:dir.y andYaw:dir.x];
 }
@@ -491,7 +508,24 @@
 {
     CGPoint dir;
     dir.x = 0;
-    dir.y = -0.05;
+    dir.y = -0.15;
+    [self setXVelocity:-dir.y andYVelocity:dir.x];
+}
+
+- (void)leftStickDown
+{
+    CGPoint dir;
+    dir.x = 0;
+    dir.y = 0.6;
+    
+    [self setThrottle:dir.y andYaw:dir.x];
+}
+
+- (void)rightStickDown
+{
+    CGPoint dir;
+    dir.x = 0;
+    dir.y = 0.15;
     [self setXVelocity:-dir.y andYVelocity:dir.x];
 }
 
@@ -509,23 +543,6 @@
     CGPoint dir;
     dir.x = 0.05;
     dir.y = 0;
-    [self setXVelocity:-dir.y andYVelocity:dir.x];
-}
-
-- (void)leftStickDown
-{
-    CGPoint dir;
-    dir.x = 0;
-    dir.y = 0.05;
-    
-    [self setThrottle:dir.y andYaw:dir.x];
-}
-
-- (void)rightStickDown
-{
-    CGPoint dir;
-    dir.x = 0;
-    dir.y = 0.05;
     [self setXVelocity:-dir.y andYVelocity:dir.x];
 }
 
@@ -667,6 +684,7 @@
 
 - (void)flightController:(DJIFlightController *)fc didUpdateSystemState:(DJIFlightControllerCurrentState *)state
 {
+    _droneState = state;
     self.droneLocation = state.aircraftLocation;
     self.batteryRemaining = state.remainingBattery;
     
