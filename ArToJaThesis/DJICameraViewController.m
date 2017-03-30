@@ -14,6 +14,10 @@
 #import "LandingSequence.h"
 #import "Stitching.h"
 
+#define weakSelf(__TARGET__) __weak typeof(self) __TARGET__=self
+#define weakReturn(__TARGET__) if(__TARGET__==nil)return;
+
+
 @interface DJICameraViewController ()<DJICameraDelegate, DJISDKManagerDelegate, DJIBaseProductDelegate, DJISimulatorDelegate, DJIFlightControllerDelegate>
 
 @property (weak, nonatomic) IBOutlet UIButton *captureBtn;
@@ -69,7 +73,7 @@
 {
     [super viewDidAppear:animated];
     
-    [[VideoPreviewer instance] setView:self.fpvPreviewView];
+//    [[VideoPreviewer instance] setView:self.fpvPreviewView];
     [self registerApp];
 }
 
@@ -675,17 +679,115 @@
     
     __weak DJICameraViewController *weakSelf = self;
     __weak DJICamera* camera = [self fetchCamera];
+    __block NSMutableData* downloadedFileData;
+    __block UIImage* output;
+    
+//    self.imgView.image = [LandingSequence takeSnapshot:camera];
+    
     if (camera) {
+//        [camera setCameraMode:DJICameraModePlayback withCompletion:nil];
+//        [camera.playbackManager selectAllFiles];
+//        [camera.playbackManager deleteAllSelectedFiles];
+        
+//        [self showAlertViewWithTitle:@"Take Photo Error" withMessage:error.description]
+        sleep(3);
+        
+        weakSelf(target);
+        
+        // take picture
+        [camera setCameraMode:DJICameraModeShootPhoto withCompletion:nil];
         [camera startShootPhoto:DJICameraShootPhotoModeSingle withCompletion:^(NSError * _Nullable error) {
+            weakReturn(target);
             if (error) {
                 [weakSelf showAlertViewWithTitle:@"Take Photo Error" withMessage:error.description];
             }
         }];
+        
+        sleep(3);
+        
+        // download picture
+        [camera setCameraMode:DJICameraModeMediaDownload withCompletion:^(NSError * _Nullable error) {
+            weakReturn(target);
+            if (error) {
+                [weakSelf showAlertViewWithTitle:@"Playback Mode Error" withMessage:error.description];
+            }
+        }];
+        
+        sleep(3);
+        
+        DJIMediaManager* mediaManager = camera.mediaManager;
+        [mediaManager fetchMediaListWithCompletion:^(NSArray<DJIMedia *> * _Nullable mediaList, NSError * _Nullable error) {
+            WeakReturn(target);
+            
+            if (error) {
+                [weakSelf showAlertViewWithTitle:@"FetchMediaList Error" withMessage:error.description];
+            }
+            else {
+                for (DJIMedia *file in mediaList) {
+                    [weakSelf showAlertViewWithTitle:file.fileName withMessage:file.timeCreated];
+                    [file fetchMediaDataWithCompletion:^(NSData * _Nullable data, BOOL * _Nullable stop, NSError * _Nullable error) {
+                        if (error) {
+                            [weakSelf showAlertViewWithTitle:@"Download Image Error" withMessage:error.description];
+                        }
+
+                        output = [UIImage imageWithData:data];
+                        NSString* dims = [NSString stringWithFormat:@"size: %lu, %f, %f", data.length, output.size.height, output.size.width];
+                        // NSDATA too small? try deleting and taking new image
+                        [weakSelf showAlertViewWithTitle:@"Parsing Output" withMessage:dims];
+
+                        self.imgView.image = output;
+                    }];
+                };
+            }
+        }];
+        
+        
+//        [camera.playbackManager selectAllFiles]; // there should only be one
+//        [camera.playbackManager downloadSelectedFilesWithPreparation:
+//         ^(NSString * _Nullable fileName, DJIDownloadFileType fileType, NSUInteger fileSize, BOOL * _Nonnull skip) {
+//             downloadedFileData = [NSMutableData new];
+//             
+//         } process:^(NSData * _Nullable data, NSError * _Nullable error) {
+//             weakReturn(target);
+//             [downloadedFileData appendData:data];
+//             if (error) {
+//                 [weakSelf showAlertViewWithTitle:@"Download Data Error" withMessage:error.description];
+//             }
+//             
+//         } fileCompletion:^{
+//             weakReturn(target);
+//             output = [UIImage imageWithData:downloadedFileData];
+//             
+//         } overallCompletion:^(NSError * _Nullable error) {
+//             if (error) {
+//                 [weakSelf showAlertViewWithTitle:@"Completion Error" withMessage:error.description];
+//             }
+//         }];
     }
     
+    self.imgView.image = output;
+    
 }
+
+//+ setImgView:(NSArray<DJIMedia *> * _Nullable) mediaList {
+//    __weak DJICameraViewController *weakSelf = self;
+//    
+//    for (DJIMedia *file in mediaList) {
+//        [weakSelf showAlertViewWithTitle:file.fileName withMessage:file.timeCreated];
+//        [file fetchMediaDataWithCompletion:^(NSData * _Nullable data, BOOL * _Nullable stop, NSError * _Nullable error) {
+//            weakSelf.imgView.image = [UIImage imageWithData:downloadedFileData];
+//        }];
+//    };
+//}
+
+
 - (IBAction)processAction:(id)sender {
 //    __weak DJICameraViewController *weakSelf = self;
+    
+    // move gimbal
+    [LandingSequence moveGimbal:((DJIAircraft*)[DJISDKManager product])];
+    
+    // process image and show results
     UIImage* target = [UIImage imageNamed: @"target"];
     NSArray* coords = [Stitching findTargetCoordinates:target];
     UIImage* result = [Stitching getRedMask:target];
@@ -693,9 +795,9 @@
     NSString * outputString = [coords description];
     self.coordTextView.text = outputString;
     
-//    UIImage* colored = [Stitching imageWithColor:result location:coords];
-    
     self.imgView.image = result;
+    
+    
 }
 
 - (IBAction)recordAction:(id)sender {

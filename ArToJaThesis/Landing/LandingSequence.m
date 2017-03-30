@@ -32,6 +32,34 @@
     return height / 2; // some magic equation
 }
 
++ (void) moveGimbal:(DJIAircraft*) drone {
+    // set gimbal to point straight downwards
+    DJIGimbal* gimbal = drone.gimbal;
+    
+    weakSelf(target);
+    [drone.camera setCameraMode:DJICameraModeShootPhoto withCompletion:^(NSError * _Nullable error) {
+        weakReturn(target);
+        if (!error) {
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                gimbal.completionTimeForControlAngleAction = 2.0; // slow down initial rotation, make sure correct direction
+                
+                [gimbal resetGimbalWithCompletion:nil];
+                sleep(3);
+                
+                DJIGimbalAngleRotation pitchRotation = {NO, 0, DJIGimbalRotateDirectionClockwise};
+                DJIGimbalAngleRotation rollRotation = {NO, 0, DJIGimbalRotateDirectionClockwise};
+                DJIGimbalAngleRotation yawRotation = {YES, 45.0, DJIGimbalRotateDirectionClockwise};
+                
+                [gimbal rotateGimbalWithAngleMode:DJIGimbalAngleModeAbsoluteAngle pitch:pitchRotation roll:rollRotation yaw:yawRotation withCompletion:^(NSError * _Nullable error) {
+                    if (error) {
+                        NSLog(@"Rotate Gimbal Failed: %@", [NSString stringWithFormat:@"%@", error.description]);
+                    }
+                }];
+            });
+        }
+    }];
+    
+}
 
 + (UIImage*) takeSnapshot: (DJICamera*)camera {
     
@@ -41,9 +69,9 @@
     DJIPlaybackManager* playback = camera.playbackManager;
     
     // remove previous images
-    [camera setCameraMode:DJICameraModePlayback withCompletion:nil];
-    [playback selectAllFiles];
-    [playback deleteAllSelectedFiles];
+//    [camera setCameraMode:DJICameraModePlayback withCompletion:nil];
+//    [playback selectAllFiles];
+//    [playback deleteAllSelectedFiles];
 
     // align gimbal
     
