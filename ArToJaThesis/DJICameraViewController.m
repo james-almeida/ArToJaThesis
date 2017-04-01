@@ -670,8 +670,6 @@
 }
 
 
-
-
 #pragma mark -DJI Simulator Delegate
 
 -(void)simulator:(DJISimulator *)simulator updateSimulatorState:(DJISimulatorState *)state {
@@ -699,8 +697,10 @@
     __weak DJICamera* camera = [self fetchCamera];
     __block NSMutableData* downloadedFileData;
     __block UIImage* output;
+        
     
-//    self.imgView.image = [LandingSequence takeSnapshot:camera];
+    [LandingSequence moveGimbal:((DJIAircraft*)[DJISDKManager product])];
+    /*
     
     if (camera) {
 //        [camera setCameraMode:DJICameraModePlayback withCompletion:nil];
@@ -760,30 +760,11 @@
         }];
         
         
-//        [camera.playbackManager selectAllFiles]; // there should only be one
-//        [camera.playbackManager downloadSelectedFilesWithPreparation:
-//         ^(NSString * _Nullable fileName, DJIDownloadFileType fileType, NSUInteger fileSize, BOOL * _Nonnull skip) {
-//             downloadedFileData = [NSMutableData new];
-//             
-//         } process:^(NSData * _Nullable data, NSError * _Nullable error) {
-//             weakReturn(target);
-//             [downloadedFileData appendData:data];
-//             if (error) {
-//                 [weakSelf showAlertViewWithTitle:@"Download Data Error" withMessage:error.description];
-//             }
-//             
-//         } fileCompletion:^{
-//             weakReturn(target);
-//             output = [UIImage imageWithData:downloadedFileData];
-//             
-//         } overallCompletion:^(NSError * _Nullable error) {
-//             if (error) {
-//                 [weakSelf showAlertViewWithTitle:@"Completion Error" withMessage:error.description];
-//             }
-//         }];
     }
-    
+    //    self.imgView.image = [LandingSequence takeSnapshot:camera];
     self.imgView.image = output;
+     
+     */
     
 }
 
@@ -803,7 +784,7 @@
 //    __weak DJICameraViewController *weakSelf = self;
     
     // move gimbal
-    [LandingSequence moveGimbal:((DJIAircraft*)[DJISDKManager product])];
+//    [LandingSequence moveGimbal:((DJIAircraft*)[DJISDKManager product])];
     
     // process image and show results
     UIImage* target = [UIImage imageNamed: @"target"];

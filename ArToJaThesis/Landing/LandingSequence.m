@@ -36,29 +36,13 @@
     // set gimbal to point straight downwards
     DJIGimbal* gimbal = drone.gimbal;
     
-    weakSelf(target);
-    [drone.camera setCameraMode:DJICameraModeShootPhoto withCompletion:^(NSError * _Nullable error) {
-        weakReturn(target);
-        if (!error) {
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                gimbal.completionTimeForControlAngleAction = 2.0; // slow down initial rotation, make sure correct direction
-                
-                [gimbal resetGimbalWithCompletion:nil];
-                sleep(3);
-                
-                DJIGimbalAngleRotation pitchRotation = {NO, 0, DJIGimbalRotateDirectionClockwise};
-                DJIGimbalAngleRotation rollRotation = {NO, 0, DJIGimbalRotateDirectionClockwise};
-                DJIGimbalAngleRotation yawRotation = {YES, 45.0, DJIGimbalRotateDirectionClockwise};
-                
-                [gimbal rotateGimbalWithAngleMode:DJIGimbalAngleModeAbsoluteAngle pitch:pitchRotation roll:rollRotation yaw:yawRotation withCompletion:^(NSError * _Nullable error) {
-                    if (error) {
-                        NSLog(@"Rotate Gimbal Failed: %@", [NSString stringWithFormat:@"%@", error.description]);
-                    }
-                }];
-            });
-        }
-    }];
+    gimbal.completionTimeForControlAngleAction = 0.1;
     
+    
+    DJIGimbalAngleRotation pitchRotation = {YES, 89.9, DJIGimbalRotateDirectionCounterClockwise};
+    DJIGimbalAngleRotation rollRotation = {NO, 0, DJIGimbalRotateDirectionClockwise};
+    DJIGimbalAngleRotation yawRotation = {NO, 0, DJIGimbalRotateDirectionClockwise};
+    [gimbal rotateGimbalWithAngleMode:DJIGimbalAngleModeAbsoluteAngle pitch:pitchRotation roll:rollRotation yaw:yawRotation withCompletion:nil];
 }
 
 + (UIImage*) takeSnapshot: (DJICamera*)camera {
@@ -139,18 +123,8 @@
 + (void) landDrone:(DJIFlightControllerCurrentState*) droneState drone:(DJIAircraft*) drone {
     UIImage* snapshot;
     
-    // set gimbal to point straight downwards
-    DJIGimbal* gimbal = drone.gimbal;
-    
-    gimbal.completionTimeForControlAngleAction = 10; // slow down initial rotation, make sure correct direction
-    
-    [gimbal resetGimbalWithCompletion:nil];
-    DJIGimbalAngleRotation pitchRotation = {NO, 90, DJIGimbalRotateDirectionCounterClockwise};
-    DJIGimbalAngleRotation rollRotation = {NO, 0, DJIGimbalRotateDirectionClockwise};
-    DJIGimbalAngleRotation yawRotation = {NO, 0, DJIGimbalRotateDirectionClockwise};
-    
-    [gimbal rotateGimbalWithAngleMode:DJIGimbalAngleModeAbsoluteAngle pitch:pitchRotation roll:rollRotation yaw:yawRotation withCompletion:nil];
-    
+    // point gimbal straight downwards
+    [self moveGimbal:drone];
     
     // take pictures while landing
     while (![self isLanded:droneState]) {
