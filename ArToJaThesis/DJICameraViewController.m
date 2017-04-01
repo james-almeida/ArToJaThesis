@@ -697,74 +697,94 @@
     __weak DJICamera* camera = [self fetchCamera];
     __block NSMutableData* downloadedFileData;
     __block UIImage* output;
-        
+    
+    __block BOOL waiting;
+    
+    if (!camera)
+        return;
     
     [LandingSequence moveGimbal:((DJIAircraft*)[DJISDKManager product])];
-    /*
     
-    if (camera) {
-//        [camera setCameraMode:DJICameraModePlayback withCompletion:nil];
-//        [camera.playbackManager selectAllFiles];
-//        [camera.playbackManager deleteAllSelectedFiles];
-        
-//        [self showAlertViewWithTitle:@"Take Photo Error" withMessage:error.description]
-        sleep(3);
-        
-        weakSelf(target);
-        
-        // take picture
-        [camera setCameraMode:DJICameraModeShootPhoto withCompletion:nil];
-        [camera startShootPhoto:DJICameraShootPhotoModeSingle withCompletion:^(NSError * _Nullable error) {
-            weakReturn(target);
-            if (error) {
-                [weakSelf showAlertViewWithTitle:@"Take Photo Error" withMessage:error.description];
-            }
-        }];
-        
-        sleep(3);
-        
-        // download picture
-        [camera setCameraMode:DJICameraModeMediaDownload withCompletion:^(NSError * _Nullable error) {
-            weakReturn(target);
-            if (error) {
-                [weakSelf showAlertViewWithTitle:@"Playback Mode Error" withMessage:error.description];
-            }
-        }];
-        
-        sleep(3);
-        
-        DJIMediaManager* mediaManager = camera.mediaManager;
-        [mediaManager fetchMediaListWithCompletion:^(NSArray<DJIMedia *> * _Nullable mediaList, NSError * _Nullable error) {
-            WeakReturn(target);
-            
-            if (error) {
-                [weakSelf showAlertViewWithTitle:@"FetchMediaList Error" withMessage:error.description];
-            }
-            else {
-                for (DJIMedia *file in mediaList) {
-                    [weakSelf showAlertViewWithTitle:file.fileName withMessage:file.timeCreated];
-                    [file fetchMediaDataWithCompletion:^(NSData * _Nullable data, BOOL * _Nullable stop, NSError * _Nullable error) {
+    weakSelf(target);
+
+    DJIMediaManager* mediaManager = camera.mediaManager;
+    
+//    [weakSelf showAlertViewWithTitle:@"Deleting Images" withMessage:@""];
+//    waiting = true;
+//    // delete all the images
+//    [camera setCameraMode:DJICameraModeMediaDownload withCompletion:^(NSError * _Nullable error) {
+//        weakReturn(target);
+//        if (error) {
+//            [weakSelf showAlertViewWithTitle:@"Playback Mode Error" withMessage:error.description];
+//        } else {
+//            [mediaManager fetchMediaListWithCompletion:^(NSArray<DJIMedia *> * _Nullable mediaList, NSError * _Nullable error) {
+//                weakReturn(target);
+//                
+//                if (error) {
+//                    [weakSelf showAlertViewWithTitle:@"FetchMediaList Error" withMessage:error.description];
+//                }
+//                else {
+//                    [mediaManager deleteMedia: mediaList withCompletion:^(NSArray<DJIMedia *> * _Nonnull deleteFailures, NSError * _Nullable error) {
+//                        if (error) {
+//                            [weakSelf showAlertViewWithTitle:@"Delete Image Error" withMessage:error.description];
+//                        }
+//                        waiting = false;
+//                    }];
+//                }
+//            }];
+//        }
+//    }];
+//    
+//    while (waiting) {}
+    
+    // take picture
+    [camera setCameraMode:DJICameraModeShootPhoto withCompletion:^(NSError * _Nullable error) {
+        weakReturn(target);
+        if (error) {
+            [weakSelf showAlertViewWithTitle:@"Mode ShootPhoto Error" withMessage:error.description];
+        }
+    }];
+    
+    sleep(1);
+    
+    [camera startShootPhoto:DJICameraShootPhotoModeSingle withCompletion:^(NSError * _Nullable error) {
+        weakReturn(target);
+        if (error) {
+            [weakSelf showAlertViewWithTitle:@"Take Photo Error" withMessage:error.description];
+        }
+    }];
+    sleep(2);
+
+    // download picture
+    [camera setCameraMode:DJICameraModeMediaDownload withCompletion:^(NSError * _Nullable error) {
+        weakReturn(target);
+        if (error) {
+            [weakSelf showAlertViewWithTitle:@"Playback Mode Error" withMessage:error.description];
+        } else {
+            [mediaManager fetchMediaListWithCompletion:^(NSArray<DJIMedia *> * _Nullable mediaList, NSError * _Nullable error) {
+                weakReturn(target);
+                
+                if (error) {
+                    [weakSelf showAlertViewWithTitle:@"FetchMediaList2 Error" withMessage:error.description];
+                }
+                else {
+                    DJIMedia *file = mediaList[[mediaList count] - 1];
+                    
+                    // using thumbnail rn
+                    [file fetchPreviewImageWithCompletion:^(UIImage * _Nonnull image, NSError * _Nullable error){
                         if (error) {
                             [weakSelf showAlertViewWithTitle:@"Download Image Error" withMessage:error.description];
+                        } else {
+                            self.imgView.image = image;
                         }
-
-                        output = [UIImage imageWithData:data];
-                        NSString* dims = [NSString stringWithFormat:@"size: %lu, %f, %f", data.length, output.size.height, output.size.width];
-                        // NSDATA too small? try deleting and taking new image
-                        [weakSelf showAlertViewWithTitle:@"Parsing Output" withMessage:dims];
-
-                        self.imgView.image = output;
                     }];
-                };
-            }
-        }];
-        
-        
-    }
+                    
+                }
+            }];
+        }
+    }];
+    
     //    self.imgView.image = [LandingSequence takeSnapshot:camera];
-    self.imgView.image = output;
-     
-     */
     
 }
 
