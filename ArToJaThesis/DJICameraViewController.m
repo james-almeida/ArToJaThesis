@@ -263,7 +263,7 @@
     if (_shouldElevate) {
         for (int i=0; i<60; i++) {
             [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
-            [self leftStickUp];
+            [self leftStickUp:i withLimit:60];
         }
     }
     
@@ -272,7 +272,7 @@
 
     for (int i=0; i<60; i++) {
         [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
-        [self rightStickUp];
+        [self rightStickUp:i withLimit:60];
 
     }
     
@@ -281,7 +281,7 @@
     
     for (int i=0; i<60; i++) {
         [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
-        [self rightStickLeft];
+        [self rightStickLeft:i withLimit:60];
     }
     
     [self bothSticksNeutral];
@@ -289,7 +289,7 @@
     
     for (int i=0; i<60; i++) {
         [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
-        [self rightStickDown];
+        [self rightStickDown:i withLimit:60];
     }
     
     [self bothSticksNeutral];
@@ -297,7 +297,7 @@
     
     for (int i=0; i<60; i++) {
         [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
-        [self rightStickRight];
+        [self rightStickRight:i withLimit:60];
     }
 
     [self bothSticksNeutral];
@@ -308,7 +308,7 @@
     if (_batteryRemaining == DJIAircraftRemainingBatteryStateLow) {
         for (int i=0; i<150; i++) {
             [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
-            [self leftStickDown];
+            [self leftStickDown:i withLimit:150];
         }
         
         [self bothSticksNeutral];
@@ -346,70 +346,81 @@ TODO:
     [self setXVelocity:-dir.y andYVelocity:dir.x];
 }
 
-- (void)leftStickUp
+- (void)leftStickUp:(int) prog withLimit:(int) total
 {
     CGPoint dir;
+    
+    double scale = 2.0*(total/2.0 - abs(prog-(total/2))) / total;
     dir.x = 0;
-    dir.y = -0.4;
+    dir.y = (-0.4)*scale;
 
     [self setThrottle:dir.y andYaw:dir.x];
 }
 
-- (void)rightStickUp
+- (void)rightStickUp:(int) prog withLimit:(int) total
 {
     CGPoint dir;
+    
+    double scale = 2.0*(total/2.0 - abs(prog-(total/2))) / total;
     dir.x = 0;
-    dir.y = -0.15;
+    dir.y = (-0.15)*scale;
     [self setXVelocity:-dir.y andYVelocity:dir.x];
 }
 
-- (void)leftStickDown
+- (void)leftStickDown:(int) prog withLimit:(int) total
 {
     CGPoint dir;
+    
+    double scale = 2.0*(total/2.0 - abs(prog-(total/2))) / total;
     dir.x = 0;
-    dir.y = 0.4;
+    dir.y = (0.4)*scale;
     
     [self setThrottle:dir.y andYaw:dir.x];
 }
 
-- (void)rightStickDown
+- (void)rightStickDown:(int) prog withLimit:(int) total
 {
     CGPoint dir;
+    double scale = 2.0*(total/2.0 - abs(prog-(total/2))) / total;
     dir.x = 0;
-    dir.y = 0.15;
+    dir.y = (0.15)*scale;
     [self setXVelocity:-dir.y andYVelocity:dir.x];
 }
 
-- (void)leftStickRight
+- (void)leftStickRight:(int) prog withLimit:(int) total
 {
     CGPoint dir;
-    dir.x = 0.05;
+    double scale = 2.0*(total/2.0 - abs(prog-(total/2))) / total;
+    dir.x = (0.05)*scale;
     dir.y = 0;
     
     [self setThrottle:dir.y andYaw:dir.x];
 }
 
-- (void)rightStickRight
+- (void)rightStickRight:(int) prog withLimit:(int) total
 {
     CGPoint dir;
-    dir.x = 0.15;
+    double scale = 2.0*(total/2.0 - abs(prog-(total/2))) / total;
+    dir.x = (0.15)*scale;
     dir.y = 0;
     [self setXVelocity:-dir.y andYVelocity:dir.x];
 }
 
-- (void)leftStickLeft
+- (void)leftStickLeft:(int) prog withLimit:(int) total
 {
     CGPoint dir;
-    dir.x = -0.05;
+    double scale = 2.0*(total/2.0 - abs(prog-(total/2))) / total;
+    dir.x = (-0.05)*scale;
     dir.y = 0;
     
     [self setThrottle:dir.y andYaw:dir.x];
 }
 
-- (void)rightStickLeft
+- (void)rightStickLeft:(int) prog withLimit:(int) total
 {
     CGPoint dir;
-    dir.x = -0.15;
+    double scale = 2.0*(total/2.0 - abs(prog-(total/2))) / total;
+    dir.x = (-0.15)*scale;
     dir.y = 0;
     [self setXVelocity:-dir.y andYVelocity:dir.x];
 }
