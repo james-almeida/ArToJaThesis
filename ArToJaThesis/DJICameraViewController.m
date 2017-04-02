@@ -36,22 +36,11 @@
 - (IBAction)recordAction:(id)sender;
 - (IBAction)changeWorkModeAction:(id)sender;
 
-@property(nonatomic, weak) IBOutlet VirtualStickView *virtualStickLeft;
-@property(nonatomic, weak) IBOutlet VirtualStickView *virtualStickRight;
-
-@property (weak, nonatomic) IBOutlet UIButton *simulatorButton;
-@property (weak, nonatomic) IBOutlet UILabel *simulatorStateLabel;
-@property (assign, nonatomic) BOOL isSimulatorOn;
 @property (assign, nonatomic) float mXVelocity;
 @property (assign, nonatomic) float mYVelocity;
 @property (assign, nonatomic) float mYaw;
 @property (assign, nonatomic) float mThrottle;
 
-- (IBAction) onEnterVirtualStickControlButtonClicked:(id)sender;
-- (IBAction) onExitVirtualStickControlButtonClicked:(id)sender;
-- (IBAction) onTakeoffButtonClicked:(id)sender;
-- (IBAction) onSimulatorButtonClicked:(id)sender;
-- (IBAction) onLandButtonClicked:(id)sender;
 
 @property (weak, nonatomic) IBOutlet UIButton *startButton;
 - (IBAction) onStartButtonClicked:(id)sender;
@@ -64,14 +53,9 @@
 @property(nonatomic, assign) CLLocationCoordinate2D droneLocation;
 @property(nonatomic, assign) DJIAircraftRemainingBatteryState batteryRemaining;
 @property(nonatomic, assign) BOOL shouldElevate;
-@property(nonatomic, assign) int currentStick;
-@property(nonatomic, assign) int currentDir;
 @property(nonatomic, assign) int flightLoopCount;
 @property(nonatomic, assign) int counter;
-
-
-
-
+@property(nonatomic, assign) NSTimeInterval SLEEP_TIME_BTWN_STICK_COMMANDS;
 
 @end
 
@@ -84,7 +68,8 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    
+    self.SLEEP_TIME_BTWN_STICK_COMMANDS = 0.09;
+
 //    [[VideoPreviewer instance] setView:self.fpvPreviewView];
     [self registerApp];
 }
@@ -98,13 +83,6 @@
     self.title = @"DJISimulator Demo";
     
     self.imgView.image = [UIImage imageNamed: @"target"];
-
-    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
-    [notificationCenter addObserver: self
-                           selector: @selector (onStickChanged:)
-                               name: @"StickChanged"
-                             object: nil];
-    
 }
 
 -(void)viewWillAppear:(BOOL)animated {
@@ -269,311 +247,94 @@
  * * *      -> If less than 20%, begin landing sequence
  * * * 2) Fly to designated height
  * * * 3) Set self to correct orientation (TESTING REQUIRED)
- * * * 4) Begin flight loop --> While battery remains above 20%,
- * * *      -  Fly in each direction at 1/20 max speed for 10 seconds
- * * *      -  Fly in each direction at 1/20 max speed for 10 seconds
- * * *      -  Fly in each direction at 1/20 max speed for 10 seconds
+ * * * 4) Begin flight loop --> While battery remains above "LOW",
+ * * *      -  Fly in each direction a slow speed for 6 seconds
  
  */
 - (void) virtualPilot:(DJIFlightController*) fc {
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil];
     
-    double commandDelayInSeconds = 10;
-    double stickDelayInSeconds = 0.1;
-    dispatch_time_t commandDelay = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(commandDelayInSeconds * NSEC_PER_SEC));
-    dispatch_time_t stickDelay = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(stickDelayInSeconds * NSEC_PER_SEC));
-    
-    // no idea how to get the state
-    // DJIFlightControllerCurrentState* state = fc.delegate
-    if (self.batteryRemaining < 0.20) {
+    if (self.batteryRemaining == DJIAircraftRemainingBatteryStateLow) {
         // Begin landing sequence
         // [LandingSequence landDrone: drone:<#(DJIAircraft *)#>]
     }
     
+    // Elevate drone for 6 seconds at a rate of ~10Hz
     if (_shouldElevate) {
-        [DemoUtility showAlertViewWithTitle:nil message:@"Elevating." cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
-        
-//        _currentStick = 1;
-//        _currentDir = 1;
-        //[self startUpdateTimer];
-        // Elevate drone for 6 seconds at a rate of ~10Hz
         for (int i=0; i<60; i++) {
-            [NSThread sleepForTimeInterval:0.09];
+            [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
             [self leftStickUp];
-            //[self performSelectorOnMainThread:@selector(leftStickUp) withObject:nil waitUntilDone:true];
-            //_missionStatus.text = [NSString stringWithFormat:@"%d calls", i];
-            //[updateTimer fire];
         }
     }
     
-    
     [self bothSticksNeutral];
-    [DemoUtility showAlertViewWithTitle:nil message:@"Waiting to move." cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
-    
-//    _currentDir = 3;
-//    for (int i=0; i<150; i++) {
-//        //[NSThread sleepForTimeInterval:0.09];
-//        [updateTimer fire];
-//    }
-    //_missionStatus.text = @"Waiting to Move";
-
-//    
-//    
-//    // Wait for 2 seconds, then move forward for 3 seconds
-    //[NSThread sleepForTimeInterval:2];
+    [NSThread sleepForTimeInterval:2];
 
     for (int i=0; i<60; i++) {
-        [NSThread sleepForTimeInterval:0.09];
+        [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
         [self rightStickUp];
-        [DemoUtility showAlertViewWithTitle:nil message:@"Move forward." cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
 
     }
+    
     [self bothSticksNeutral];
-
     [NSThread sleepForTimeInterval:2];
     
     for (int i=0; i<60; i++) {
-        [NSThread sleepForTimeInterval:0.09];
+        [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
         [self rightStickLeft];
-        [DemoUtility showAlertViewWithTitle:nil message:@"Move left" cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
-
     }
+    
     [self bothSticksNeutral];
-
-
     [NSThread sleepForTimeInterval:2];
     
     for (int i=0; i<60; i++) {
-        [NSThread sleepForTimeInterval:0.09];
+        [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
         [self rightStickDown];
-        [DemoUtility showAlertViewWithTitle:nil message:@"Move backward" cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
     }
-    [self bothSticksNeutral];
-
     
+    [self bothSticksNeutral];
     [NSThread sleepForTimeInterval:2];
     
     for (int i=0; i<60; i++) {
-        [NSThread sleepForTimeInterval:0.09];
+        [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
         [self rightStickRight];
-        [DemoUtility showAlertViewWithTitle:nil message:@"Move right" cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
     }
+
     [self bothSticksNeutral];
-    [DemoUtility showAlertViewWithTitle:nil message:[NSString stringWithFormat:@"Done with %hhu battery", _droneState.remainingBattery] cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
     
-   [NSThread sleepForTimeInterval:5];
+    [NSThread sleepForTimeInterval:5];
+    
     _flightLoopCount += 1;
-    if (_flightLoopCount > 3) {
-        // initiate landing sequence
-        // Immediately land in place
-        [DemoUtility showAlertViewWithTitle:nil message:@"Landing" cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
+    if (_batteryRemaining == DJIAircraftRemainingBatteryStateLow) {
         for (int i=0; i<150; i++) {
-            [NSThread sleepForTimeInterval:0.09];
+            [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
             [self leftStickDown];
         }
+        
         [self bothSticksNeutral];
         
         // once landing is done, wait for battery to be > 0.75
-        while (_droneState.remainingBattery < 0.75) {
+        while (_droneState.remainingBattery != DJIAircraftRemainingBatteryStateNormal) {
             [NSThread sleepForTimeInterval:5.0];
-            [DemoUtility showAlertViewWithTitle:nil message:[NSString stringWithFormat:@"Done with %hhu battery", _droneState.remainingBattery] cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
-
+            [DemoUtility showAlertViewWithTitle:nil message:@"Battery too low to fly." cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
         }
         _shouldElevate = true;
         [self virtualPilot:fc];
     }
+    
     else {
         _shouldElevate = false;
-        [DemoUtility showAlertViewWithTitle:nil message:[NSString stringWithFormat:@"Done with %hhu battery", _droneState.remainingBattery] cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
         [self virtualPilot:fc];
     }
-//
 
 }
 
-// USING AN NSTIMER AND FIRE CALLS TO GET FREQUENCY
-//
-//-(void) onUpdateTimerTicked:(id)sender
-//{
-//    if (_currentDir == 1) {
-//        [self leftStickUp];
-//    }
-//    else if (_currentDir == 3) {
-//        [self leftStickDown];
-//    }
-//}
-//
-//-(void) startUpdateTimer
-//{
-//    if (updateTimer == nil) {
-//        updateTimer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(onUpdateTimerTicked:) userInfo:nil repeats:YES];
-//        [updateTimer fire];
-//    }
-//}
-//
-//-(void) stopUpdateTimer
-//{
-//    if (updateTimer) {
-//        [updateTimer invalidate];
-//        updateTimer = nil;
-//    }
-//}
-
 /*
- 
- Initial TODO:
-    Test VirtualPilot v0.1 (figure out what directions/orientations mean and make notes
-        --> Does frequency work? Is it choppy or smooth control? Is it too slow?
-    Figure out how to get DJIFlightControllerCurrentState for Tony's methods
-        --> This is probably as simple as understanding how delegates work
-    With a firm understanding of directionality, write a more complex VirtualPilot
-        --> Adjust times/speeds for direction sticks
-        --> Make it fly in a square
-    Decide if we even need the VirtualStickView class (probably not)
-        --> Maybe salvage the timer out of it?
+TODO:
     Clean up UI
     Access photos from onboard SDK to process
  */
 
-
-
--(IBAction) onEnterVirtualStickControlButtonClicked:(id)sender
-{
-    DJIFlightController* fc = [DemoUtility fetchFlightController];
-    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil];
-    
-    if (fc) {
-        fc.yawControlMode = DJIVirtualStickYawControlModeAngularVelocity;
-        fc.rollPitchControlMode = DJIVirtualStickRollPitchControlModeVelocity;
-        
-        [fc enableVirtualStickControlModeWithCompletion:^(NSError *error) {
-            if (error) {
-                [DemoUtility showAlertViewWithTitle:nil message:[NSString stringWithFormat:@"Enter Virtual Stick Mode: %@", error.description] cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
-            }
-            else
-            {
-                [DemoUtility showAlertViewWithTitle:nil message:@"Enter Virtual Stick Mode:Succeeded" cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
-            }
-        }];
-    }
-    else
-    {
-        [DemoUtility showAlertViewWithTitle:nil message:@"Component not exist." cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
-    }
-}
-
--(IBAction) onExitVirtualStickControlButtonClicked:(id)sender
-{
-    DJIFlightController* fc = [DemoUtility fetchFlightController];
-    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil];
-    
-    if (fc) {
-        [fc disableVirtualStickControlModeWithCompletion:^(NSError * _Nullable error) {
-            if (error){
-                [DemoUtility showAlertViewWithTitle:nil message:[NSString stringWithFormat:@"Exit Virtual Stick Mode: %@", error.description] cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
-            } else{
-                [DemoUtility showAlertViewWithTitle:nil message:@"Exit Virtual Stick Mode:Succeeded" cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
-            }
-        }];
-    }
-    else
-    {
-        [DemoUtility showAlertViewWithTitle:nil message:@"Component not exist." cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
-        
-    }
-}
-
-- (IBAction)onSimulatorButtonClicked:(id)sender {
-    
-    DJIFlightController* fc = [DemoUtility fetchFlightController];
-    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil];
-    
-    if (fc && fc.simulator) {
-        if (!self.isSimulatorOn) {
-            // The initial aircraft's position in the simulator.
-            CLLocationCoordinate2D location = CLLocationCoordinate2DMake(22, 113);
-            [fc.simulator startSimulatorWithLocation:location updateFrequency:20 GPSSatellitesNumber:10 withCompletion:^(NSError * _Nullable error) {
-                if (error) {
-                    [DemoUtility showAlertViewWithTitle:nil message:[NSString stringWithFormat:@"Start simulator error: %@", error.description] cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
-                    
-                } else {
-                    [DemoUtility showAlertViewWithTitle:nil message:@"Start Simulator succeeded." cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
-                }
-            }];
-        }
-        else {
-            [fc.simulator stopSimulatorWithCompletion:^(NSError * _Nullable error) {
-                if (error) {
-                    [DemoUtility showAlertViewWithTitle:nil message:[NSString stringWithFormat:@"Stop simulator error: %@", error.description] cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
-                    
-                } else {
-                    [DemoUtility showAlertViewWithTitle:nil message:@"Stop Simulator succeeded." cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
-                }
-            }];
-        }
-    }
-}
-
--(IBAction) onTakeoffButtonClicked:(id)sender
-{
-    DJIFlightController* fc = [DemoUtility fetchFlightController];
-    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil];
-    
-    if (fc) {
-        [fc takeoffWithCompletion:^(NSError *error) {
-            if (error) {
-                [DemoUtility showAlertViewWithTitle:nil message:[NSString stringWithFormat:@"Takeoff: %@", error.description] cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
-                
-            } else {
-                [DemoUtility showAlertViewWithTitle:nil message:@"Takeoff Success." cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
-                
-            }
-        }];
-    }
-    else
-    {
-        [DemoUtility showAlertViewWithTitle:nil message:@"Component not exist." cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
-    }
-}
-
-- (IBAction)onLandButtonClicked:(id)sender {
-    
-    DJIFlightController* fc = [DemoUtility fetchFlightController];
-    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil];
-    
-    if (fc) {
-        [fc autoLandingWithCompletion:^(NSError * _Nullable error) {
-            if (error) {
-                [DemoUtility showAlertViewWithTitle:nil message:[NSString stringWithFormat:@"AutoLand : %@", error.description] cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
-                
-            } else {
-                [DemoUtility showAlertViewWithTitle:nil message:@"AutoLand Started." cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
-            }
-        }];
-    }
-    else
-    {
-        [DemoUtility showAlertViewWithTitle:nil message:@"Component not exist." cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
-    }
-}
-
-- (void)onStickChanged:(NSNotification*)notification
-{
-    NSDictionary *dict = [notification userInfo];
-    NSValue *vdir = [dict valueForKey:@"dir"];
-    CGPoint dir = [vdir CGPointValue];
-    
-    VirtualStickView* virtualStick = (VirtualStickView*)notification.object;
-    if (virtualStick) {
-        if (virtualStick == self.virtualStickLeft) {
-            [self setThrottle:dir.y andYaw:dir.x];
-        }
-        else
-        {
-            [self setXVelocity:-dir.y andYVelocity:dir.x];
-        }
-    }
-}
 
 - (void)bothSticksNeutral
 {
@@ -674,13 +435,11 @@
     ctrlData.roll = self.mXVelocity;
     ctrlData.yaw = self.mYaw;
     ctrlData.verticalThrottle = self.mThrottle;
-    DJIFlightController* fc = [DemoUtility fetchFlightController];
+    DJIFlightController* fc = self.flightController; //[DemoUtility fetchFlightController];
     if (fc && fc.isVirtualStickControlModeAvailable) {
         [fc sendVirtualStickFlightControlData:ctrlData withCompletion:nil];
     }
 }
-
-
 
 
 #pragma mark DJISDKManagerDelegate Method
@@ -784,9 +543,7 @@
     if (self.batteryRemaining == DJIAircraftRemainingBatteryStateVeryLow) {
         self.altitudeLabel.text = @"VERY LOW";
     }
-    if (self.batteryRemaining == DJIAircraftRemainingBatteryStateReserved) {
-        self.altitudeLabel.text = @"RESERVED";
-    }
+    
     self.missionStatus.text = [NSString stringWithFormat:@"Battery remaining: %hhu %d", self.batteryRemaining, self.counter];
     
 }
