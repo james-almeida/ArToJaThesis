@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "LandingSequence.h"
 #import "Stitching.h"
+#import "../Frameworks/VideoPreviewer/VideoPreviewer/VideoPreviewer.h"
+
 
 #define TRUE_X 1000.0 // need to be calibrated
 #define TRUE_Y 1000.0
@@ -46,45 +48,20 @@
 }
 
 + (UIImage*) takeSnapshot: (DJICamera*)camera {
-    
-    __block NSMutableData* downloadedFileData;
     __block UIImage* output;
     
-    DJIPlaybackManager* playback = camera.playbackManager;
+    dispatch_semaphore_t sema = dispatch_semaphore_create(0);
     
-    // remove previous images
-//    [camera setCameraMode:DJICameraModePlayback withCompletion:nil];
-//    [playback selectAllFiles];
-//    [playback deleteAllSelectedFiles];
-
-    // align gimbal
-    
+    [[VideoPreviewer instance] snapshotPreview:^(UIImage *snapshot) {
+        dispatch_semaphore_signal(sema);
+        output = snapshot;
+        
+    }];
     
     
-    // take picture
-    [camera setCameraMode:DJICameraModeShootPhoto withCompletion:nil];
-    [camera startShootPhoto:DJICameraShootPhotoModeSingle withCompletion:nil];
-    
-    // download picture
-    [camera setCameraMode:DJICameraModePlayback withCompletion:nil];
-    [playback selectAllFiles]; // there should only be one
-    
-    weakSelf(target);
-    
-    [playback downloadSelectedFilesWithPreparation:
-        ^(NSString * _Nullable fileName, DJIDownloadFileType fileType, NSUInteger fileSize, BOOL * _Nonnull skip) {
-            downloadedFileData = [NSMutableData new];
-            
-        } process:^(NSData * _Nullable data, NSError * _Nullable error) {
-            weakReturn(target);
-            [downloadedFileData appendData:data];
-            
-        } fileCompletion:^{
-            weakReturn(target);
-            output = [UIImage imageWithData:downloadedFileData];
-            
-        } overallCompletion:^(NSError * _Nullable error) { /* do nothing */ }];
-    
+    while (dispatch_semaphore_wait(sema, DISPATCH_TIME_NOW)) {
+        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:10]];
+    }
     
     return output;
 }

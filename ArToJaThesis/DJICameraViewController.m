@@ -70,7 +70,7 @@
     [super viewDidAppear:animated];
     self.SLEEP_TIME_BTWN_STICK_COMMANDS = 0.09;
 
-//    [[VideoPreviewer instance] setView:self.fpvPreviewView];
+    [[VideoPreviewer instance] setView: self.fpvPreviewView];
     [self registerApp];
 }
 
@@ -82,7 +82,7 @@
     
     self.title = @"DJISimulator Demo";
     
-    self.imgView.image = [UIImage imageNamed: @"target"];
+//    self.imgView.image = [UIImage imageNamed: @"target"];
 }
 
 -(void)viewWillAppear:(BOOL)animated {
@@ -559,116 +559,31 @@ TODO:
     
 }
 
+- (UIImage *) imageWithView:(UIView *)view
+{
+    UIGraphicsBeginImageContextWithOptions(view.bounds.size, view.opaque, 0.0);
+    [view.layer renderInContext:UIGraphicsGetCurrentContext()];
+    
+    UIImage * img = UIGraphicsGetImageFromCurrentImageContext();
+    
+    UIGraphicsEndImageContext();
+    
+    return img;
+}
+
 
 #pragma mark - IBAction Methods
 
 - (IBAction)captureAction:(id)sender {
-    
-    __weak DJICameraViewController *weakSelf = self;
-    __weak DJICamera* camera = [self fetchCamera];
-    __block NSMutableData* downloadedFileData;
     __block UIImage* output;
     
-    __block BOOL waiting;
-    
-    if (!camera)
+    if (![self fetchCamera])
         return;
     
     [LandingSequence moveGimbal:((DJIAircraft*)[DJISDKManager product])];
     
-    weakSelf(target);
-
-    DJIMediaManager* mediaManager = camera.mediaManager;
-    
-//    [weakSelf showAlertViewWithTitle:@"Deleting Images" withMessage:@""];
-//    waiting = true;
-//    // delete all the images
-//    [camera setCameraMode:DJICameraModeMediaDownload withCompletion:^(NSError * _Nullable error) {
-//        weakReturn(target);
-//        if (error) {
-//            [weakSelf showAlertViewWithTitle:@"Playback Mode Error" withMessage:error.description];
-//        } else {
-//            [mediaManager fetchMediaListWithCompletion:^(NSArray<DJIMedia *> * _Nullable mediaList, NSError * _Nullable error) {
-//                weakReturn(target);
-//                
-//                if (error) {
-//                    [weakSelf showAlertViewWithTitle:@"FetchMediaList Error" withMessage:error.description];
-//                }
-//                else {
-//                    [mediaManager deleteMedia: mediaList withCompletion:^(NSArray<DJIMedia *> * _Nonnull deleteFailures, NSError * _Nullable error) {
-//                        if (error) {
-//                            [weakSelf showAlertViewWithTitle:@"Delete Image Error" withMessage:error.description];
-//                        }
-//                        waiting = false;
-//                    }];
-//                }
-//            }];
-//        }
-//    }];
-//    
-//    while (waiting) {}
-    
-    // take picture
-    [camera setCameraMode:DJICameraModeShootPhoto withCompletion:^(NSError * _Nullable error) {
-        weakReturn(target);
-        if (error) {
-            [weakSelf showAlertViewWithTitle:@"Mode ShootPhoto Error" withMessage:error.description];
-        }
-    }];
-    
-    sleep(1);
-    
-    [camera startShootPhoto:DJICameraShootPhotoModeSingle withCompletion:^(NSError * _Nullable error) {
-        weakReturn(target);
-        if (error) {
-            [weakSelf showAlertViewWithTitle:@"Take Photo Error" withMessage:error.description];
-        }
-    }];
-    sleep(2);
-
-    // download picture
-    [camera setCameraMode:DJICameraModeMediaDownload withCompletion:^(NSError * _Nullable error) {
-        weakReturn(target);
-        if (error) {
-            [weakSelf showAlertViewWithTitle:@"Playback Mode Error" withMessage:error.description];
-        } else {
-            [mediaManager fetchMediaListWithCompletion:^(NSArray<DJIMedia *> * _Nullable mediaList, NSError * _Nullable error) {
-                weakReturn(target);
-                
-                if (error) {
-                    [weakSelf showAlertViewWithTitle:@"FetchMediaList2 Error" withMessage:error.description];
-                }
-                else {
-                    DJIMedia *file = mediaList[[mediaList count] - 1];
-                    
-                    // using thumbnail rn
-                    [file fetchPreviewImageWithCompletion:^(UIImage * _Nonnull image, NSError * _Nullable error){
-                        if (error) {
-                            [weakSelf showAlertViewWithTitle:@"Download Image Error" withMessage:error.description];
-                        } else {
-                            self.imgView.image = image;
-                        }
-                    }];
-                    
-                }
-            }];
-        }
-    }];
-    
-    //    self.imgView.image = [LandingSequence takeSnapshot:camera];
-    
+    self.imgView.image = [LandingSequence takeSnapshot:nil];
 }
-
-//+ setImgView:(NSArray<DJIMedia *> * _Nullable) mediaList {
-//    __weak DJICameraViewController *weakSelf = self;
-//    
-//    for (DJIMedia *file in mediaList) {
-//        [weakSelf showAlertViewWithTitle:file.fileName withMessage:file.timeCreated];
-//        [file fetchMediaDataWithCompletion:^(NSData * _Nullable data, BOOL * _Nullable stop, NSError * _Nullable error) {
-//            weakSelf.imgView.image = [UIImage imageWithData:downloadedFileData];
-//        }];
-//    };
-//}
 
 
 - (IBAction)processAction:(id)sender {
