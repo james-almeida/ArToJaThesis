@@ -7,11 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
-
+@class DJICameraViewController;
 @interface Stitching : NSObject
 
 //+ (bool) stitchImageWithArray:(NSMutableArray*)imageArray andResult:(cv::Mat) result;
-+ (NSArray*) findTargetCoordinates:(UIImage*) rawImage;
++ (NSArray*) findTargetCoordinates:(UIImage*) rawImage viewController:(DJICameraViewController*) vc;
 + (UIImage*) getRedMask:(UIImage*) rawImage;
 + (UIImage *)imageWithColor:(UIImage*)image location:(NSArray*) coords;
 

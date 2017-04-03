@@ -11,5 +11,11 @@
 @interface DJICameraViewController : UIViewController
 {
     NSTimer* updateTimer;
+    
 }
+
+- (void)setSnapshot:(UIImage*) image;
+- (void)showAlertViewWithTitle:(NSString *)title withMessage:(NSString *)message;
+
+
 @end

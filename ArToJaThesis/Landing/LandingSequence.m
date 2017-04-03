@@ -11,24 +11,17 @@
 #import "Stitching.h"
 #import "../Frameworks/VideoPreviewer/VideoPreviewer/VideoPreviewer.h"
 
+#import "../DJICameraViewController.h" // for testing purposes
 
-#define TRUE_X 1000.0 // need to be calibrated
-#define TRUE_Y 1000.0
+
+#define TRUE_X 240.0 // need to be calibrated
+#define TRUE_Y 180.0
 
 #define weakSelf(__TARGET__) __weak typeof(self) __TARGET__=self
 #define weakReturn(__TARGET__) if(__TARGET__==nil)return;
 
 
 @implementation LandingSequence
-
-//- (void)showAlertViewWithTitle:(NSString *)title withMessage:(NSString *)message
-//{
-//    UIAlertController *alert = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
-//    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
-//    [alert addAction:okAction];
-//    [self presentViewController:alert animated:YES completion:nil];
-//}
-
 
 + (double) getScale: (double) height {
     return height / 2; // some magic equation
@@ -47,7 +40,30 @@
     [gimbal rotateGimbalWithAngleMode:DJIGimbalAngleModeAbsoluteAngle pitch:pitchRotation roll:rollRotation yaw:yawRotation withCompletion:nil];
 }
 
-+ (UIImage*) takeSnapshot: (DJICamera*)camera {
+//+ (UIImage*) takeSnapshot {
+//    __block UIImage* output;
+//    
+//    dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
+//        //Background Thread
+//        dispatch_async(dispatch_get_main_queue(), ^(void){
+//            //Run UI Updates
+//        });
+//    });
+//    
+//    [[VideoPreviewer instance] snapshotPreview:^(UIImage *snapshot) {
+//        
+//        dispatch_async(dispatch_get_main_queue(), ^(void){
+//            //Run UI Updates
+//            [DJICameraViewController setSnapshot:snapshot];
+//        });
+//        
+//    }];
+//    
+//    
+//    return nil;
+//}
+
++ (UIImage*) takeSnapshot {
     __block UIImage* output;
     
     dispatch_semaphore_t sema = dispatch_semaphore_create(0);
@@ -63,12 +79,12 @@
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:10]];
     }
     
-    return output;
+    return output; // hxw = 360x480
 }
 
 
 + (void) landingStep:(DJIFlightControllerCurrentState*) droneState snapshot:(UIImage*) snapshot{
-    
+    /*
     // find center on image
     NSArray* coords = [Stitching findTargetCoordinates: snapshot];
     
@@ -94,6 +110,8 @@
     
     // decrease height
     // drop 2 meters
+     
+     */
 }
 
 
@@ -105,8 +123,9 @@
     
     // take pictures while landing
     while (![self isLanded:droneState]) {
-        snapshot =  [self takeSnapshot:drone.camera];
+        snapshot =  [self takeSnapshot];
         [self landingStep: droneState snapshot:snapshot];
+        sleep(2);
     }
 }
 

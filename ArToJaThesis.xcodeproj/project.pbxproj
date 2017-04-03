@@ -140,8 +140,8 @@
 		29660DB31E899B5E006E406D /* Landing */ = {
 			isa = PBXGroup;
 			children = (
-				29660DB11E899B55006E406D /* LandingSequence.m */,
 				29660DB41E899B8A006E406D /* LandingSequence.h */,
+				29660DB11E899B55006E406D /* LandingSequence.m */,
 			);
 			name = Landing;
 			sourceTree = "<group>";

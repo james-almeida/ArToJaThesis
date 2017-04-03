@@ -10,6 +10,7 @@
 #import "StitchingWrapper.h"
 #import "OpenCVConversion.h"
 #import "opencv2/imgcodecs/ios.h"
+#import "DJICameraViewController.h"
 
 #define COMPRESS_RATIO 0.2
 
@@ -51,6 +52,7 @@
     
     // convert to cv::Mat datatype
     // http://stackoverflow.com/questions/10254141/how-to-convert-from-cvmat-to-uiimage-in-objective-c/10254561
+    
     cv::Mat compressedMat;
     //    UIImageToMat(compressedUIImage, compressedMat); //[OpenCVConversion cvMat3FromUIImage:compressedUIImage];
     UIImageToMat(rawImage, compressedMat); //[OpenCVConversion cvMat3FromUIImage:compressedUIImage];
@@ -99,22 +101,21 @@
 
 
 // TODO: use cv::function rather than cvFunction?
-+ (NSArray*) findTargetCoordinates:(UIImage*) rawImage {
++ (NSArray*) findTargetCoordinates:(UIImage*) rawImage viewController:(DJICameraViewController*) vc {
     
     // compress image
-    UIImage* compressedUIImage = [self compressedToRatio:rawImage ratio:COMPRESS_RATIO];
+//    UIImage* compressedUIImage = [self compressedToRatio:rawImage ratio:COMPRESS_RATIO];
     
     // convert to cv::Mat datatype
-    // http://stackoverflow.com/questions/10254141/how-to-convert-from-cvmat-to-uiimage-in-objective-c/10254561
     cv::Mat compressedMat;
-//    UIImageToMat(compressedUIImage, compressedMat); //[OpenCVConversion cvMat3FromUIImage:compressedUIImage];
     UIImageToMat(rawImage, compressedMat); //[OpenCVConversion cvMat3FromUIImage:compressedUIImage];
-
+    
     
     // steps to find target
     // 1. convert to HSV
     cv::Mat hsvImage;
     cv::cvtColor(compressedMat, hsvImage, CV_BGR2HSV);
+    
     
     // 2. create mask for red & blue, sum together
     
@@ -129,15 +130,16 @@
     
     cv::add(blueMask, redMask, sumMask);
     
+    
     // 3. laplacian for sum
     cv::Mat laplaceImage = cv::Mat::zeros(sumMask.rows, sumMask.cols, CV_32S);;
     cv::Laplacian(sumMask, laplaceImage, -1, 15, 1, 0, cv::BORDER_DEFAULT);
     laplaceImage = laplaceImage / 2.0;
     
+    
     // 4. '+' shaped kernel
     int n = 50;
     int m = 8;
-
 
     cv::Mat kernel = cv::Mat::zeros(n, n, CV_32F);
     for (int i = 0; i < n; i++) {
@@ -151,66 +153,17 @@
     }
     kernel = kernel / float(n * n);
     
-    
-//    for (int i = 0; i < n; i++) {
-//        NSMutableString *line = [NSMutableString stringWithCapacity:80];
-//        for (int j = 0; j < n; j++) {
-//            [line appendFormat:@"%d ", kernel.at<int>(i,j)];
-//        }
-//        NSLog(line);
-//    }
-    
     cv::Mat filteredImage; //= cv::Mat::zeros(laplaceImage.rows, laplaceImage.cols, CV_32F);
     cv::filter2D(laplaceImage, filteredImage, -1, kernel);
-//    filteredImage = filteredImage;
+    
     
     // 5. find index of max value
-    double minVal, maxVal, maxVal2;
+    double minVal, maxVal;
     cv::Point minPoint, maxPoint;
     cv::minMaxLoc(filteredImage, &minVal, &maxVal, &minPoint, &maxPoint, cv::noArray());
-//
-    int idx[2];
-    cv::minMaxIdx(filteredImage, NULL, &maxVal2, NULL, idx, cv::noArray());
-    
-    NSInteger rows = filteredImage.rows;
-    NSInteger cols = filteredImage.cols;
-    
-    NSInteger xmax, ymax, maxval;
-    xmax = -1;
-    ymax = -1;
-    maxval = -1;
-    
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
-            if (filteredImage.at<char>(j,i) > maxval) {
-                xmax = i;
-                ymax = j;
-                maxval = filteredImage.at<char>(j,i);
-//                NSLog(@"New Max: %dl, at: (%d, %d)", maxval, xmax, ymax);
-            }
-        }
-    }
-    
-//    if (xmax == -1)
-//        return NULL;
-//    
-//    // return result, or null
-    return @[[NSNumber numberWithInteger:xmax], [NSNumber numberWithInteger:ymax], [NSNumber numberWithFloat:maxval],
-             [NSNumber numberWithInteger:maxPoint.x], [NSNumber numberWithInteger:maxPoint.y], [NSNumber numberWithFloat:maxVal],
-             [NSNumber numberWithInteger:idx[0]], [NSNumber numberWithInteger:idx[1]], [NSNumber numberWithInteger:maxVal2], [NSNumber numberWithChar:filteredImage.at<char>(452,0)], [NSNumber numberWithChar:filteredImage.at<char>(0,452)],[NSNumber numberWithChar:filteredImage.at<char>(452,452)]];
-    
-    
-//    int p = 2;
-//    cv::Mat k2 = cv::Mat(p,p, CV_64F, 0.0);
-//    kernel.at<double>(0,1) = 255;
-//    kernel.at<double>(1,0) = 255;
-//        return @[[NSNumber numberWithInteger:kernel.at<double>(0,1)], [NSNumber numberWithInteger:kernel.at<double>(0,0)], [NSNumber numberWithInteger:kernel.at<double>(1,0)]];
-    
-    
-//    return @[[NSNumber numberWithInteger:maxPoint.x], [NSNumber numberWithInteger:maxPoint.y], [NSNumber numberWithInteger:maxVal]];
-    
-//    return @[[NSNumber numberWithInteger:idx[0]], [NSNumber numberWithInteger:idx[1]], [NSNumber numberWithInteger:maxVal]];
 
+    return @[[NSNumber numberWithInteger:maxPoint.x], [NSNumber numberWithInteger:maxPoint.y], [NSNumber numberWithFloat:maxVal]];
+     
 
 }
 

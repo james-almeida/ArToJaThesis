@@ -82,7 +82,7 @@
     
     self.title = @"DJISimulator Demo";
     
-//    self.imgView.image = [UIImage imageNamed: @"target"];
+    self.imgView.image = nil;
 }
 
 -(void)viewWillAppear:(BOOL)animated {
@@ -559,47 +559,41 @@ TODO:
     
 }
 
-- (UIImage *) imageWithView:(UIView *)view
-{
-    UIGraphicsBeginImageContextWithOptions(view.bounds.size, view.opaque, 0.0);
-    [view.layer renderInContext:UIGraphicsGetCurrentContext()];
-    
-    UIImage * img = UIGraphicsGetImageFromCurrentImageContext();
-    
-    UIGraphicsEndImageContext();
-    
-    return img;
-}
-
-
 #pragma mark - IBAction Methods
 
 - (IBAction)captureAction:(id)sender {
-    __block UIImage* output;
     
     if (![self fetchCamera])
         return;
     
-    [LandingSequence moveGimbal:((DJIAircraft*)[DJISDKManager product])];
+//    [LandingSequence moveGimbal:((DJIAircraft*)[DJISDKManager product])];
     
-    self.imgView.image = [LandingSequence takeSnapshot:nil];
+    self.imgView.image = [LandingSequence takeSnapshot];
+    
+    CGSize imgSize = self.imgView.image.size;
+    NSString* text = [NSString stringWithFormat:@"HxW: %f %f", imgSize.height, imgSize.width];
+    [self showAlertViewWithTitle:@"Image Dimensions" withMessage:text];
+}
+
+- (void)setSnapshot:(UIImage*) image {
+    self.imgView.image = image;
 }
 
 
 - (IBAction)processAction:(id)sender {
-//    __weak DJICameraViewController *weakSelf = self;
     
-    // move gimbal
-//    [LandingSequence moveGimbal:((DJIAircraft*)[DJISDKManager product])];
-    
+    UIImage* target = self.imgView.image;
     // process image and show results
-    UIImage* target = [UIImage imageNamed: @"target"];
-    NSArray* coords = [Stitching findTargetCoordinates:target];
-    UIImage* result = [Stitching getRedMask:target];
     
+    if (target == nil)
+        target = [UIImage imageNamed: @"target"];
+    
+    
+    NSArray* coords = [Stitching findTargetCoordinates:target viewController:self];
+    
+    UIImage* result = [Stitching getRedMask:target];
     NSString * outputString = [coords description];
     self.coordTextView.text = outputString;
-    
     self.imgView.image = result;
     
     
