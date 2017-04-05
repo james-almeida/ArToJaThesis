@@ -267,6 +267,11 @@
         }
     }
     
+    sleep(2);
+    
+//    [self landDrone:_droneState drone:((DJIAircraft *)[DJISDKManager product])];
+    
+    
     [self bothSticksNeutral];
     [NSThread sleepForTimeInterval:2];
 
@@ -281,7 +286,7 @@
     
     for (int i=0; i<60; i++) {
         [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
-        [self rightStickLeft:i withLimit:60];
+        [self rightStickDown:i withLimit:60];
     }
     
     [self bothSticksNeutral];
@@ -289,8 +294,9 @@
     
     for (int i=0; i<60; i++) {
         [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
-        [self rightStickDown:i withLimit:60];
+        [self rightStickLeft:i withLimit:60];
     }
+
     
     [self bothSticksNeutral];
     [NSThread sleepForTimeInterval:2];
@@ -326,6 +332,8 @@
         _shouldElevate = false;
         [self virtualPilot:fc];
     }
+     
+    
 
 }
 
@@ -450,6 +458,72 @@ TODO:
     if (fc && fc.isVirtualStickControlModeAvailable) {
         [fc sendVirtualStickFlightControlData:ctrlData withCompletion:nil];
     }
+}
+
+
+
+- (void) landingStep:(DJIFlightControllerCurrentState*) droneState snapshot:(UIImage*) snapshot{
+    NSInteger TRUE_X = 240;
+    NSInteger TRUE_Y = 180;
+    
+    self.imgView.image = snapshot;
+    
+    // find center on image
+    NSArray* coords = [Stitching findTargetCoordinates: snapshot viewController:self];
+//    self.coordTextView.text = [coords description];
+    
+     // check rotation
+     // rotate appropriate
+     
+     // calculate error
+//     NSInteger errX = [[coords objectAtIndex:0] integerValue] - TRUE_X;
+//     NSInteger errY = [[coords objectAtIndex:1] integerValue] - TRUE_Y;
+    
+//     // get scale
+//     double height;
+//     if (droneState.isUltrasonicBeingUsed)
+//         height = droneState.ultrasonicHeight;
+//     else
+//         height = droneState.altitude; // very inaccurate
+//     
+//    double getScale = 0.1;//[self getScale:height];
+//    
+//     // move drone
+//     double moveX = errX * getScale;
+//     double moveY = errY * getScale;
+//     
+     // decrease height
+     // drop 2 meters
+    int lim = 30;
+    for (int i=0; i<lim; i++) {
+        [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
+        [self leftStickDown:i withLimit:lim];
+    }
+    
+    
+    [self bothSticksNeutral];
+    [NSThread sleepForTimeInterval:2];
+}
+
+
+- (void) landDrone:(DJIFlightControllerCurrentState*) droneState drone:(DJIAircraft*) drone {
+    UIImage* snapshot;
+    
+    // point gimbal straight downwards
+    [LandingSequence moveGimbal:drone];
+    
+    // take pictures while landing
+//    while (true /*[droneState isFlying]*/) {
+//        snapshot =  [LandingSequence takeSnapshot];
+        int lim = 30;
+        for (int i=0; i<lim; i++) {
+            [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
+            [self leftStickDown:i withLimit:lim];
+        }
+        
+        [NSThread sleepForTimeInterval:2];
+//        [self landingStep: droneState snapshot:snapshot];
+//    }
 }
 
 

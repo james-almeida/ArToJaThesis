@@ -40,29 +40,6 @@
     [gimbal rotateGimbalWithAngleMode:DJIGimbalAngleModeAbsoluteAngle pitch:pitchRotation roll:rollRotation yaw:yawRotation withCompletion:nil];
 }
 
-//+ (UIImage*) takeSnapshot {
-//    __block UIImage* output;
-//    
-//    dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
-//        //Background Thread
-//        dispatch_async(dispatch_get_main_queue(), ^(void){
-//            //Run UI Updates
-//        });
-//    });
-//    
-//    [[VideoPreviewer instance] snapshotPreview:^(UIImage *snapshot) {
-//        
-//        dispatch_async(dispatch_get_main_queue(), ^(void){
-//            //Run UI Updates
-//            [DJICameraViewController setSnapshot:snapshot];
-//        });
-//        
-//    }];
-//    
-//    
-//    return nil;
-//}
-
 + (UIImage*) takeSnapshot {
     __block UIImage* output;
     
@@ -73,7 +50,6 @@
         output = snapshot;
         
     }];
-    
     
     while (dispatch_semaphore_wait(sema, DISPATCH_TIME_NOW)) {
         [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:10]];
