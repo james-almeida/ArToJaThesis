@@ -66,8 +66,8 @@
     
     cv::Mat redMask, blueMask, sumMask;
     
-    cv::inRange(hsvImage, cv::Scalar(110, 170, 170), cv::Scalar(130, 255, 255), redMask); // flip bc BGR
-    cv::inRange(hsvImage, cv::Scalar(-10, 170, 170), cv::Scalar(10, 255, 255), blueMask);
+    cv::inRange(hsvImage, cv::Scalar(110, 50, 50), cv::Scalar(130, 200, 200), redMask); // flip bc BGR
+    cv::inRange(hsvImage, cv::Scalar(-10, 50, 50), cv::Scalar(10, 200, 200), blueMask);
     
     if (blueMask.empty() || redMask.empty()) return NULL;
     
@@ -96,7 +96,7 @@
     cv::Mat filteredImage;
     cv::filter2D(laplaceImage, filteredImage, -1, kernel);
     
-    return MatToUIImage(filteredImage);
+    return MatToUIImage(sumMask);
 }
 
 
@@ -123,8 +123,8 @@
     cv::Mat blueMask = cv::Mat::zeros(hsvImage.rows, hsvImage.cols, CV_32S);
     cv::Mat sumMask = cv::Mat::zeros(hsvImage.rows, hsvImage.cols, CV_32S);
     
-    cv::inRange(hsvImage, cv::Scalar(110, 170, 170), cv::Scalar(130, 255, 255), redMask); // flip bc BGR
-    cv::inRange(hsvImage, cv::Scalar(-10, 170, 170), cv::Scalar(10, 255, 255), blueMask);
+    cv::inRange(hsvImage, cv::Scalar(110, 50, 50), cv::Scalar(130, 255, 255), redMask); // flip bc BGR
+    cv::inRange(hsvImage, cv::Scalar(-10, 50, 50), cv::Scalar(10, 255, 255), blueMask);
     
     if (blueMask.empty() || redMask.empty()) return NULL;
     
