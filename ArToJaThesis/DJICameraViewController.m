@@ -582,21 +582,23 @@ TODO:
 
 - (IBAction)processAction:(id)sender {
     
+    // get captured image
     UIImage* target = self.imgView.image;
-    // process image and show results
     
+    // use test image otherwise
     if (target == nil)
         target = [UIImage imageNamed: @"target"];
     
-    
+    // get coordinates
     NSArray* coords = [Stitching findTargetCoordinates:target viewController:self];
     
+    // display result, with highlighted center
     UIImage* result = [Stitching getRedMask:target];
-    NSString * outputString = [coords description];
-    self.coordTextView.text = outputString;
+    result = [Stitching imageWithColor:result location:coords];
     self.imgView.image = result;
     
-    
+    // print coordinates
+    self.coordTextView.text = [coords description];
 }
 
 - (IBAction)recordAction:(id)sender {

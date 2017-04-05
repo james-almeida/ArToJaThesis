@@ -48,13 +48,12 @@
 
 + (UIImage*) getRedMask:(UIImage*) rawImage {
     // compress image
-    UIImage* compressedUIImage = [self compressedToRatio:rawImage ratio:COMPRESS_RATIO];
+//    UIImage* compressedUIImage = [self compressedToRatio:rawImage ratio:COMPRESS_RATIO];
     
     // convert to cv::Mat datatype
     // http://stackoverflow.com/questions/10254141/how-to-convert-from-cvmat-to-uiimage-in-objective-c/10254561
     
     cv::Mat compressedMat;
-    //    UIImageToMat(compressedUIImage, compressedMat); //[OpenCVConversion cvMat3FromUIImage:compressedUIImage];
     UIImageToMat(rawImage, compressedMat); //[OpenCVConversion cvMat3FromUIImage:compressedUIImage];
     
     // steps to find target
@@ -66,8 +65,8 @@
     
     cv::Mat redMask, blueMask, sumMask;
     
-    cv::inRange(hsvImage, cv::Scalar(110, 50, 50), cv::Scalar(130, 200, 200), redMask); // flip bc BGR
-    cv::inRange(hsvImage, cv::Scalar(-10, 50, 50), cv::Scalar(10, 200, 200), blueMask);
+    cv::inRange(hsvImage, cv::Scalar(110, 160, 100), cv::Scalar(130, 255, 255), redMask); // flip bc BGR
+    cv::inRange(hsvImage, cv::Scalar(-10, 160, 100), cv::Scalar(10, 255, 255), blueMask);
     
     if (blueMask.empty() || redMask.empty()) return NULL;
     
@@ -96,7 +95,7 @@
     cv::Mat filteredImage;
     cv::filter2D(laplaceImage, filteredImage, -1, kernel);
     
-    return MatToUIImage(sumMask);
+    return MatToUIImage(filteredImage);
 }
 
 
@@ -123,8 +122,8 @@
     cv::Mat blueMask = cv::Mat::zeros(hsvImage.rows, hsvImage.cols, CV_32S);
     cv::Mat sumMask = cv::Mat::zeros(hsvImage.rows, hsvImage.cols, CV_32S);
     
-    cv::inRange(hsvImage, cv::Scalar(110, 50, 50), cv::Scalar(130, 255, 255), redMask); // flip bc BGR
-    cv::inRange(hsvImage, cv::Scalar(-10, 50, 50), cv::Scalar(10, 255, 255), blueMask);
+    cv::inRange(hsvImage, cv::Scalar(110, 160, 100), cv::Scalar(130, 255, 255), redMask); // flip bc BGR
+    cv::inRange(hsvImage, cv::Scalar(-10, 160, 100), cv::Scalar(10, 255, 255), blueMask);
     
     if (blueMask.empty() || redMask.empty()) return NULL;
     
@@ -163,44 +162,28 @@
     cv::minMaxLoc(filteredImage, &minVal, &maxVal, &minPoint, &maxPoint, cv::noArray());
 
     return @[[NSNumber numberWithInteger:maxPoint.x], [NSNumber numberWithInteger:maxPoint.y], [NSNumber numberWithFloat:maxVal]];
-     
-
 }
 
 + (UIImage *)imageWithColor:(UIImage*)image location:(NSArray*) coords{
+        
+    UIImage* outputImage = image; //[UIImage imageWithData:UIImagePNGRepresentation(image)];
+    CGRect imageRect = CGRectMake(0, 0, outputImage.size.width, outputImage.size.height);
     
-    UIColor* color = [UIColor colorWithRed:255 green:0 blue:0 alpha:1];
-    
-    // begin a new image context, to draw our colored image onto
-    CGSize size = CGSizeMake(image.size.width/2, image.size.height/2);
-    UIGraphicsBeginImageContextWithOptions(size, NO, [[UIScreen mainScreen] scale]);
-    
-    // get a reference to that context we created
+    UIGraphicsBeginImageContext(outputImage.size);
     CGContextRef context = UIGraphicsGetCurrentContext();
     
-    // set the fill color
-    [color setFill];
+    //Save current status of graphics context
+    CGContextSaveGState(context);
+    CGContextDrawImage(context, imageRect, outputImage.CGImage);
+    //    And then just draw a point on it wherever you want like this:
     
-    // translate/flip the graphics context (for transforming from CG* coords to UI* coords
-    CGContextTranslateCTM(context, 0, size.height);
-    CGContextScaleCTM(context, 1.0, -1.0);
+    NSInteger size = 5;
+    CGContextSetRGBFillColor(context, 1.0 , 0.0, 0.0, 1);
+    CGContextFillRect(context, CGRectMake([coords[0] integerValue],[coords[1] integerValue], size, size));
     
-    // set the blend mode to overlay, and the original image
-    CGContextSetBlendMode(context, kCGBlendModeOverlay);
-    CGRect rect = CGRectMake(0, 0, size.width, size.height);
-    CGContextDrawImage(context, rect, image.CGImage);
-    
-    // set a mask that matches the shape of the image, then draw (overlay) a colored rectangle
-    CGContextClipToMask(context, rect, image.CGImage);
-    CGContextAddRect(context, rect);
-    CGContextDrawPath(context,kCGPathFill);
-    
-    // generate a new UIImage from the graphics context we drew onto
-    UIImage *coloredImg = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    
-    //return the color-burned image
-    return coloredImg;
+    CGContextRestoreGState(context);
+    UIImage *img = UIGraphicsGetImageFromCurrentImageContext();
+    return img;
 }
 
 //compress the photo width and height to COMPRESS_RATIO
