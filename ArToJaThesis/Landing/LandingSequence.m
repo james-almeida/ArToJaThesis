@@ -20,6 +20,12 @@
 #define weakSelf(__TARGET__) __weak typeof(self) __TARGET__=self
 #define weakReturn(__TARGET__) if(__TARGET__==nil)return;
 
+@interface LandingSequence()
+
+    @property(nonatomic, assign) DJICameraViewController* vc;
+
+@end
+
 
 @implementation LandingSequence
 
@@ -40,22 +46,24 @@
     [gimbal rotateGimbalWithAngleMode:DJIGimbalAngleModeAbsoluteAngle pitch:pitchRotation roll:rollRotation yaw:yawRotation withCompletion:nil];
 }
 
-+ (UIImage*) takeSnapshot {
-    __block UIImage* output;
++ (UIImage*) takeSnapshot:(DJICameraViewController*) vc {
+//    __block UIImage* output;
     
-    dispatch_semaphore_t sema = dispatch_semaphore_create(0);
+//    dispatch_semaphore_t sema = dispatch_semaphore_create(0);
     
     [[VideoPreviewer instance] snapshotPreview:^(UIImage *snapshot) {
-        dispatch_semaphore_signal(sema);
-        output = snapshot;
-        
+//        dispatch_semaphore_signal(sema);
+//        output = snapshot;
+//        [vc setSnapshot:snapshot];
+        [vc landingStep:snapshot];
     }];
     
-    while (dispatch_semaphore_wait(sema, DISPATCH_TIME_NOW)) {
-        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:10]];
-    }
-    
-    return output; // hxw = 360x480
+//    while (dispatch_semaphore_wait(sema, DISPATCH_TIME_NOW)) {
+//        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:10]];
+//    }
+//    
+//    return output; // hxw = 360x480
+    return nil;
 }
 
 
@@ -99,7 +107,7 @@
     
     // take pictures while landing
     while (![self isLanded:droneState]) {
-        snapshot =  [self takeSnapshot];
+        snapshot =  [self takeSnapshot: nil];
         [self landingStep: droneState snapshot:snapshot];
         sleep(2);
     }

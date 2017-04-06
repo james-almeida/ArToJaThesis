@@ -16,6 +16,6 @@
 
 - (void)setSnapshot:(UIImage*) image;
 - (void)showAlertViewWithTitle:(NSString *)title withMessage:(NSString *)message;
-
+- (void) landingStep:(UIImage*) snapshot;
 
 @end
