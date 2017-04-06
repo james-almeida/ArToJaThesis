@@ -172,11 +172,13 @@
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil];
 
     if (fc) {
-        fc.yawControlMode = DJIVirtualStickYawControlModeAngularVelocity;
-        fc.rollPitchControlMode = DJIVirtualStickRollPitchControlModeVelocity;
-        fc.verticalControlMode = DJIVirtualStickVerticalControlModeVelocity;
+//        fc.yawControlMode = DJIVirtualStickYawControlModeAngularVelocity;
+//        fc.rollPitchControlMode = DJIVirtualStickRollPitchControlModeVelocity;
+//        fc.verticalControlMode = DJIVirtualStickVerticalControlModeVelocity;
+//        
+//        [self autoEnterVirtualStickControl:fc];
         
-        [self autoEnterVirtualStickControl:fc];
+        [self landDrone:_droneState drone:((DJIAircraft *)[DJISDKManager product])];
         
     }
     else
@@ -261,10 +263,7 @@
     
     // Elevate drone for 6 seconds at a rate of ~10Hz
     if (_shouldElevate) {
-        for (int i=0; i<60; i++) {
-            [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
-            [self leftStickUp:i withLimit:60];
-        }
+        [self leftStickUp:60];
     }
     
     sleep(2);
@@ -274,48 +273,32 @@
     
     [self bothSticksNeutral];
     [NSThread sleepForTimeInterval:2];
-
-    for (int i=0; i<60; i++) {
-        [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
-        [self rightStickUp:i withLimit:60];
-
-    }
+    
+    [self rightStickUp:60];
     
     [self bothSticksNeutral];
     [NSThread sleepForTimeInterval:2];
     
-    for (int i=0; i<60; i++) {
-        [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
-        [self rightStickDown:i withLimit:60];
-    }
+    [self rightStickDown:60];
     
     [self bothSticksNeutral];
     [NSThread sleepForTimeInterval:2];
     
-    for (int i=0; i<60; i++) {
-        [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
-        [self rightStickLeft:i withLimit:60];
-    }
-
+    [self rightStickLeft:60];
     
     [self bothSticksNeutral];
     [NSThread sleepForTimeInterval:2];
     
-    for (int i=0; i<60; i++) {
-        [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
-        [self rightStickRight:i withLimit:60];
-    }
+    
+    [self rightStickRight:60];
+
 
     [self bothSticksNeutral];
-    
     [NSThread sleepForTimeInterval:5];
     
     _flightLoopCount += 1;
     if (_batteryRemaining == DJIAircraftRemainingBatteryStateLow) {
-        for (int i=0; i<150; i++) {
-            [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
-            [self leftStickDown:i withLimit:150];
-        }
+        [self leftStickDown:150];
         
         [self bothSticksNeutral];
         
@@ -332,9 +315,6 @@
         _shouldElevate = false;
         [self virtualPilot:fc];
     }
-     
-    
-
 }
 
 /*
@@ -342,7 +322,6 @@ TODO:
     Clean up UI
     Access photos from onboard SDK to process
  */
-
 
 - (void)bothSticksNeutral
 {
@@ -354,83 +333,119 @@ TODO:
     [self setXVelocity:-dir.y andYVelocity:dir.x];
 }
 
-- (void)leftStickUp:(int) prog withLimit:(int) total
+- (double) getStickScale:(int) prog withLimit:(int) total {
+    return 2.0 * (total/2.0 - abs(prog-(total/2))) / total;
+}
+
+- (void)leftStickUp:(int) total
+{
+    CGPoint dir;
+    for (int i=0; i<total; i++) {
+        
+        dir.x = 0;
+        dir.y = (-0.4) * [self getStickScale:i withLimit:total];
+        [self setThrottle:dir.y andYaw:dir.x];
+        
+        [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
+    }
+}
+
+- (void)rightStickUp:(int) total
 {
     CGPoint dir;
     
-    double scale = 2.0*(total/2.0 - abs(prog-(total/2))) / total;
-    dir.x = 0;
-    dir.y = (-0.4)*scale;
-
-    [self setThrottle:dir.y andYaw:dir.x];
+    for (int i=0; i<total; i++) {
+    
+        dir.x = 0;
+        dir.y = (-0.15) * [self getStickScale:i withLimit:total];
+        [self setXVelocity:-dir.y andYVelocity:dir.x];
+        
+        [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
+    }
 }
 
-- (void)rightStickUp:(int) prog withLimit:(int) total
+- (void)leftStickDown:(int) total
+{
+    CGPoint dir;
+    for (int i=0; i<total; i++) {
+        
+        dir.x = 0;
+        dir.y = (0.4) * [self getStickScale:i withLimit:total];
+        [self setThrottle:dir.y andYaw:dir.x];
+        
+        [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
+    }
+}
+
+
+- (void)rightStickDown:(int) total
 {
     CGPoint dir;
     
-    double scale = 2.0*(total/2.0 - abs(prog-(total/2))) / total;
-    dir.x = 0;
-    dir.y = (-0.15)*scale;
-    [self setXVelocity:-dir.y andYVelocity:dir.x];
+    for (int i=0; i<total; i++) {
+        
+        dir.x = 0;
+        dir.y = (0.15) * [self getStickScale:i withLimit:total];
+        [self setXVelocity:-dir.y andYVelocity:dir.x];
+        
+        [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
+    }
 }
 
-- (void)leftStickDown:(int) prog withLimit:(int) total
+- (void)leftStickRight:(int) total
 {
     CGPoint dir;
     
-    double scale = 2.0*(total/2.0 - abs(prog-(total/2))) / total;
-    dir.x = 0;
-    dir.y = (0.4)*scale;
+    for (int i=0; i<total; i++) {
+        
+        dir.x = (0.05) * [self getStickScale:i withLimit:total];
+        dir.y = 0;
+        [self setThrottle:dir.y andYaw:dir.x];
+
+        
+        [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
+    }
+}
+
+- (void)rightStickRight:(int) total
+{
+    CGPoint dir;
     
-    [self setThrottle:dir.y andYaw:dir.x];
+    for (int i=0; i<total; i++) {
+        
+        dir.x = (0.15) * [self getStickScale:i withLimit:total];
+        dir.y = 0;
+        [self setXVelocity:-dir.y andYVelocity:dir.x];
+        
+        
+        [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
+    }
 }
 
-- (void)rightStickDown:(int) prog withLimit:(int) total
+- (void)leftStickLeft:(int) total
 {
     CGPoint dir;
-    double scale = 2.0*(total/2.0 - abs(prog-(total/2))) / total;
-    dir.x = 0;
-    dir.y = (0.15)*scale;
-    [self setXVelocity:-dir.y andYVelocity:dir.x];
+    for (int i=0; i<total; i++) {
+        
+        dir.x = (-0.05) * [self getStickScale:i withLimit:total];
+        dir.y = 0;
+        [self setThrottle:dir.y andYaw:dir.x];
+        
+        [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
+    }
 }
 
-- (void)leftStickRight:(int) prog withLimit:(int) total
+- (void)rightStickLeft:(int) total
 {
     CGPoint dir;
-    double scale = 2.0*(total/2.0 - abs(prog-(total/2))) / total;
-    dir.x = (0.05)*scale;
-    dir.y = 0;
     
-    [self setThrottle:dir.y andYaw:dir.x];
-}
-
-- (void)rightStickRight:(int) prog withLimit:(int) total
-{
-    CGPoint dir;
-    double scale = 2.0*(total/2.0 - abs(prog-(total/2))) / total;
-    dir.x = (0.15)*scale;
-    dir.y = 0;
-    [self setXVelocity:-dir.y andYVelocity:dir.x];
-}
-
-- (void)leftStickLeft:(int) prog withLimit:(int) total
-{
-    CGPoint dir;
-    double scale = 2.0*(total/2.0 - abs(prog-(total/2))) / total;
-    dir.x = (-0.05)*scale;
-    dir.y = 0;
-    
-    [self setThrottle:dir.y andYaw:dir.x];
-}
-
-- (void)rightStickLeft:(int) prog withLimit:(int) total
-{
-    CGPoint dir;
-    double scale = 2.0*(total/2.0 - abs(prog-(total/2))) / total;
-    dir.x = (-0.15)*scale;
-    dir.y = 0;
-    [self setXVelocity:-dir.y andYVelocity:dir.x];
+    for (int i=0; i<total; i++) {
+        dir.x = (-0.15) * [self getStickScale:i withLimit:total];
+        dir.y = 0;
+        [self setXVelocity:-dir.y andYVelocity:dir.x];
+        
+        [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
+    }
 }
 
 -(void) setThrottle:(float)y andYaw:(float)x
@@ -466,43 +481,44 @@ TODO:
     NSInteger TRUE_X = 240;
     NSInteger TRUE_Y = 180;
     
-    self.imgView.image = snapshot;
-    
     // find center on image
-    NSArray* coords = [Stitching findTargetCoordinates: snapshot viewController:self];
-//    self.coordTextView.text = [coords description];
+    NSArray* coords = [Stitching findTargetCoordinates: snapshot viewController:nil];
+    snapshot = [Stitching imageWithColor:snapshot location:coords];
+    self.imgView.image = snapshot;
     
      // check rotation
      // rotate appropriate
      
      // calculate error
-//     NSInteger errX = [[coords objectAtIndex:0] integerValue] - TRUE_X;
-//     NSInteger errY = [[coords objectAtIndex:1] integerValue] - TRUE_Y;
+     NSInteger errX = [[coords objectAtIndex:0] integerValue] - TRUE_X;
+     NSInteger errY = [[coords objectAtIndex:1] integerValue] - TRUE_Y;
     
-//     // get scale
-//     double height;
-//     if (droneState.isUltrasonicBeingUsed)
-//         height = droneState.ultrasonicHeight;
-//     else
-//         height = droneState.altitude; // very inaccurate
-//     
-//    double getScale = 0.1;//[self getScale:height];
-//    
-//     // move drone
-//     double moveX = errX * getScale;
-//     double moveY = errY * getScale;
-//     
+     // get scale
+     double height;
+     if (droneState.isUltrasonicBeingUsed)
+         height = droneState.ultrasonicHeight;
+     else
+         height = droneState.altitude; // very inaccurate
+    
+    height = 1.0; // meters
+    double getScale = 0.1; //[self getScale:height];
+
+     // move drone
+    
+//    if (errX < 0)
+//        [self rightStickLeft:errX*getScale];
+//    else
+//        [self rightStickLeft:errX*getScale];
+    
      // decrease height
      // drop 2 meters
-    int lim = 30;
-    for (int i=0; i<lim; i++) {
-        [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
-        [self leftStickDown:i withLimit:lim];
-    }
     
     
-    [self bothSticksNeutral];
-    [NSThread sleepForTimeInterval:2];
+    NSString* output = [NSString stringWithFormat:@"Location: (%ld, %ld)\n Height: %f",(long)errX, (long)errY, height];
+    self.coordTextView.text = output;
+    
+//    [self bothSticksNeutral];
+    [NSThread sleepForTimeInterval:.5];
 }
 
 
@@ -513,15 +529,22 @@ TODO:
     [LandingSequence moveGimbal:drone];
     
     // take pictures while landing
+    for (int i = 0; i < 10; i++) {
+        snapshot =  [LandingSequence takeSnapshot];
+        [self landingStep:_droneState snapshot:snapshot];
+    }
+        
+        
+        
 //    while (true /*[droneState isFlying]*/) {
 //        snapshot =  [LandingSequence takeSnapshot];
-        int lim = 30;
-        for (int i=0; i<lim; i++) {
-            [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
-            [self leftStickDown:i withLimit:lim];
-        }
+//        int lim = 30;
+//        for (int i=0; i<lim; i++) {
+//            [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
+//            [self leftStickDown:i withLimit:lim];
+//        }
         
-        [NSThread sleepForTimeInterval:2];
+//        [NSThread sleepForTimeInterval:2];
 //        [self landingStep: droneState snapshot:snapshot];
 //    }
 }
