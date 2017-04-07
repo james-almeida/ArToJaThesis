@@ -26,7 +26,6 @@
 @property (weak, nonatomic) IBOutlet UISegmentedControl *changeWorkModeSegmentControl;
 @property (weak, nonatomic) IBOutlet UIView *fpvPreviewView;
 @property (assign, nonatomic) BOOL isRecording;
-@property (weak, nonatomic) IBOutlet UILabel *currentRecordTimeLabel;
 @property (weak, nonatomic) IBOutlet UIImageView* imgView;
 @property (weak, nonatomic) IBOutlet UITextView* coordTextView;
 
@@ -45,7 +44,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *startButton;
 - (IBAction) onStartButtonClicked:(id)sender;
 @property (strong, nonatomic) IBOutlet UILabel *missionStatus;
-@property (strong, nonatomic) IBOutlet UILabel *altitudeLabel;
+@property (strong, nonatomic) IBOutlet UILabel *homeCoordLabel;
+@property (strong, nonatomic) IBOutlet UILabel *droneCoordLabel;
 
 
 @property(nonatomic, assign) DJIFlightControllerCurrentState* droneState;
@@ -78,7 +78,6 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self.currentRecordTimeLabel setHidden:YES];
     
     self.title = @"DJISimulator Demo";
     
@@ -343,21 +342,6 @@ TODO:
     int xVal = ABS(x);
     int yVal = ABS(y);
     float total = MAX(xVal, yVal);
-
-//    if (x < 0) {
-//        xVal = -x;
-//    }
-//    else {
-//        xVal = x;
-//    }
-//    
-//    if (y < 0) {
-//        yVal = -y;
-//    }
-//    else {
-//        yVal = y;
-//    }
-    
     
     for (int i=0; i<total; i++) {
         if (i <= xVal)
@@ -370,6 +354,17 @@ TODO:
     }
     
     // yaw and throttle too?
+}
+
+- (void) moveBackToHome
+{
+    CLLocationCoordinate2D homeCoord = _droneState.homeLocation;
+    CLLocationCoordinate2D droneCoord = _droneState.aircraftLocation;
+    
+    MKMapPoint point1 = MKMapPointForCoordinate(homeCoord);
+    MKMapPoint point2 = MKMapPointForCoordinate(droneCoord);
+    CLLocationDistance distance = MKMetersBetweenMapPoints(point1, point2);
+    
 }
 
 - (void)bothSticksNeutral
@@ -662,9 +657,6 @@ TODO:
 {
     self.isRecording = systemState.isRecording;
     
-    [self.currentRecordTimeLabel setHidden:!self.isRecording];
-    [self.currentRecordTimeLabel setText:[self formattingSeconds:systemState.currentVideoRecordingTimeInSeconds]];
-    
     if (self.isRecording) {
         [self.recordBtn setTitle:@"Stop Record" forState:UIControlStateNormal];
     }else
@@ -690,18 +682,19 @@ TODO:
     self.counter += 1;
     self.droneLocation = state.aircraftLocation;
     self.batteryRemaining = state.remainingBattery;
-    if (self.batteryRemaining == DJIAircraftRemainingBatteryStateLow) {
-        self.altitudeLabel.text = @"LOW";
-    }
+    self.droneState = state;
+    self.homeCoordLabel.text = state.homeLocation;
+    self.droneCoordLabel.text = state.aircraftLocation;
+    
     if (self.batteryRemaining == DJIAircraftRemainingBatteryStateNormal) {
-        self.altitudeLabel.text = @"NORMAL";
+        self.missionStatus.text = @"NORMAL";
+    }
+    if (self.batteryRemaining == DJIAircraftRemainingBatteryStateLow) {
+        self.missionStatus.text = @"LOW";
     }
     if (self.batteryRemaining == DJIAircraftRemainingBatteryStateVeryLow) {
-        self.altitudeLabel.text = @"VERY LOW";
+        self.missionStatus.text = @"VERY LOW";
     }
-    
-    self.missionStatus.text = [NSString stringWithFormat:@"Battery remaining: %hhu %d", self.batteryRemaining, self.counter];
-    
 }
 
 #pragma mark - IBAction Methods
