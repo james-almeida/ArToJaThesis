@@ -195,11 +195,11 @@
  * * * 2) Begin takeoff/flight sequence
  */
 - (void) autoEnterVirtualStickControl:(DJIFlightController*) fc {
-//    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil];
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil];
     
     [fc enableVirtualStickControlModeWithCompletion:^(NSError *error) {
         if (error) {
-//            [DemoUtility showAlertViewWithTitle:nil message:[NSString stringWithFormat:@"Enter Virtual Stick Mode Failed: %@", error.description] cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
+            [DemoUtility showAlertViewWithTitle:nil message:[NSString stringWithFormat:@"Enter Virtual Stick Mode Failed: %@", error.description] cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
             double delayInSeconds = 5.0;
             dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
             dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
@@ -208,29 +208,28 @@
         }
         else
         {
-//            [DemoUtility showAlertViewWithTitle:nil message:@"Enter Virtual Stick Mode:Succeeded, attempting takeoff." cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
-//            [self autoTakeoff:fc];
-            
+            [DemoUtility showAlertViewWithTitle:nil message:@"Enter Virtual Stick Mode:Succeeded, attempting takeoff." cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
+            // [self autoTakeoff:fc];
             [self landDrone:_droneState drone:((DJIAircraft *)[DJISDKManager product])];
         }
     }];
 
 }
 
-- (void) autoLeaveVirtualStickControl:(DJIFlightController*) fc {
-//    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil];
-    
-    [fc disableVirtualStickControlModeWithCompletion:^(NSError * _Nullable error) {
-        if (error) {
-//            [DemoUtility showAlertViewWithTitle:nil message:[NSString stringWithFormat:@"Leave Virtual Stick Mode Failed: %@", error.description] cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
-            double delayInSeconds = 5.0;
-            dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-            dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-                [self autoLeaveVirtualStickControl:fc];
-            });
-        }
-    }];
-}
+//- (void) autoLeaveVirtualStickControl:(DJIFlightController*) fc {
+////    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil];
+//    
+//    [fc disableVirtualStickControlModeWithCompletion:^(NSError * _Nullable error) {
+//        if (error) {
+////            [DemoUtility showAlertViewWithTitle:nil message:[NSString stringWithFormat:@"Leave Virtual Stick Mode Failed: %@", error.description] cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
+//            double delayInSeconds = 5.0;
+//            dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+//            dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+//                [self autoLeaveVirtualStickControl:fc];
+//            });
+//        }
+//    }];
+//}
 
 /* Will be called automatically by autoEnterVirtualStickControl().
  * Should perform the following upon being called:
@@ -253,7 +252,9 @@
                 
         } else {
 //            [DemoUtility showAlertViewWithTitle:nil message:[NSString stringWithFormat:@"Takeoff Success, beginning virtual flight with battery: %hhu", _droneState.remainingBattery] cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
-            [self virtualPilot:fc];
+            // [self virtualPilot:fc];
+            [self landDrone:_droneState drone:((DJIAircraft *)[DJISDKManager product])];
+
         }
     }];
 
@@ -279,10 +280,8 @@
     
     // Elevate drone for 6 seconds at a rate of ~10Hz
     if (_shouldElevate) {
-        [self leftStickUp:60];
+        [self leftStickUp:10];
     }
-    
-    sleep(2);
     
 //    [self landDrone:_droneState drone:((DJIAircraft *)[DJISDKManager product])];
     
@@ -290,23 +289,23 @@
     [self bothSticksNeutral];
     [NSThread sleepForTimeInterval:2];
     
-    [self rightStickUp:60];
+    [self rightStickUp:10];
     
     [self bothSticksNeutral];
     [NSThread sleepForTimeInterval:2];
     
-    [self rightStickDown:60];
+    [self rightStickDown:10];
     
     [self bothSticksNeutral];
     [NSThread sleepForTimeInterval:2];
     
-    [self rightStickLeft:60];
+    [self rightStickLeft:10];
     
     [self bothSticksNeutral];
     [NSThread sleepForTimeInterval:2];
     
     
-    [self rightStickRight:60];
+    [self rightStickRight:10];
 
 
     [self bothSticksNeutral];
@@ -336,19 +335,35 @@
 /*
 TODO:
     Clean up UI
-    Access photos from onboard SDK to process
  */
 
 - (void) moveInDirection:(int) x withY:(int) y
 {
     CGPoint dir;
-    float total = MAX(x, y);
+    int xVal = ABS(x);
+    int yVal = ABS(y);
+    float total = MAX(xVal, yVal);
+
+//    if (x < 0) {
+//        xVal = -x;
+//    }
+//    else {
+//        xVal = x;
+//    }
+//    
+//    if (y < 0) {
+//        yVal = -y;
+//    }
+//    else {
+//        yVal = y;
+//    }
+    
     
     for (int i=0; i<total; i++) {
-        if (i <= x)
-            dir.x = (0.15) * [self getStickScale:i withLimit:(ABS(x))] * (x / total);
-        if (i <= y)
-            dir.y = (0.4) * [self getStickScale:i withLimit:(ABS(y))] * (y / total);
+        if (i <= xVal)
+            dir.x = (0.05) * [self getStickScale:i withLimit:(xVal)];
+        if (i <= yVal)
+            dir.y = (0.05) * [self getStickScale:i withLimit:(yVal)];
         [self setXVelocity:dir.y andYVelocity:dir.x];
         
         [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
@@ -372,18 +387,6 @@ TODO:
     return 2.0 * (total/2.0 - abs(prog-(total/2))) / total;
 }
 
-- (void)leftStickUp:(int) total
-{
-    CGPoint dir;
-    for (int i=0; i<total; i++) {
-        
-        dir.x = 0;
-        dir.y = (-0.4) * [self getStickScale:i withLimit:total];
-        [self setThrottle:dir.y andYaw:dir.x];
-        
-        [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
-    }
-}
 
 - (void)rightStickUp:(int) total
 {
@@ -394,19 +397,6 @@ TODO:
         dir.x = 0;
         dir.y = (-0.15) * [self getStickScale:i withLimit:total];
         [self setXVelocity:-dir.y andYVelocity:dir.x];
-        
-        [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
-    }
-}
-
-- (void)leftStickDown:(int) total
-{
-    CGPoint dir;
-    for (int i=0; i<total; i++) {
-        
-        dir.x = 0;
-        dir.y = (0.4) * [self getStickScale:i withLimit:total];
-        [self setThrottle:dir.y andYaw:dir.x];
         
         [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
     }
@@ -427,21 +417,6 @@ TODO:
     }
 }
 
-- (void)leftStickRight:(int) total
-{
-    CGPoint dir;
-    
-    for (int i=0; i<total; i++) {
-        
-        dir.x = (0.05) * [self getStickScale:i withLimit:total];
-        dir.y = 0;
-        [self setThrottle:dir.y andYaw:dir.x];
-
-        
-        [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
-    }
-}
-
 - (void)rightStickRight:(int) total
 {
     CGPoint dir;
@@ -457,19 +432,6 @@ TODO:
     }
 }
 
-- (void)leftStickLeft:(int) total
-{
-    CGPoint dir;
-    for (int i=0; i<total; i++) {
-        
-        dir.x = (-0.05) * [self getStickScale:i withLimit:total];
-        dir.y = 0;
-        [self setThrottle:dir.y andYaw:dir.x];
-        
-        [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
-    }
-}
-
 - (void)rightStickLeft:(int) total
 {
     CGPoint dir;
@@ -478,6 +440,60 @@ TODO:
         dir.x = (-0.15) * [self getStickScale:i withLimit:total];
         dir.y = 0;
         [self setXVelocity:-dir.y andYVelocity:dir.x];
+        
+        [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
+    }
+}
+
+- (void)leftStickUp:(int) total
+{
+    CGPoint dir;
+    for (int i=0; i<total; i++) {
+        
+        dir.x = 0;
+        dir.y = (-0.4) * [self getStickScale:i withLimit:total];
+        [self setThrottle:dir.y andYaw:dir.x];
+        
+        [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
+    }
+}
+
+- (void)leftStickDown:(int) total
+{
+    CGPoint dir;
+    for (int i=0; i<total; i++) {
+        
+        dir.x = 0;
+        dir.y = (0.4) * [self getStickScale:i withLimit:total];
+        [self setThrottle:dir.y andYaw:dir.x];
+        
+        [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
+    }
+}
+
+- (void)leftStickRight:(int) total
+{
+    CGPoint dir;
+    
+    for (int i=0; i<total; i++) {
+        
+        dir.x = (0.05) * [self getStickScale:i withLimit:total];
+        dir.y = 0;
+        [self setThrottle:dir.y andYaw:dir.x];
+        
+        
+        [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
+    }
+}
+
+- (void)leftStickLeft:(int) total
+{
+    CGPoint dir;
+    for (int i=0; i<total; i++) {
+        
+        dir.x = (-0.05) * [self getStickScale:i withLimit:total];
+        dir.y = 0;
+        [self setThrottle:dir.y andYaw:dir.x];
         
         [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
     }
@@ -510,8 +526,6 @@ TODO:
     }
 }
 
-
-
 - (void) landingStep:(UIImage*) snapshot{
     NSInteger TRUE_X = 240;
     NSInteger TRUE_Y = 180;
@@ -539,13 +553,19 @@ TODO:
     if (height == 0)
         height = 1.0; // meters
     
-    double scale = height * 0.1; //[self getScale:height];
+    double scale = height * 0.05; //[self getScale:height];
 
      // move drone
     int moveX = errX*scale;
     int moveY = errY*scale;
-    [self moveInDirection:errX*scale withY:errY*scale];
     
+    [self moveInDirection:moveX withY:moveY];
+//    if (moveX < 0) {
+//        [self rightStickDown:-moveX];
+//    }
+//    else {
+//        [self rightStickLeft:moveX];
+//    }
      // decrease height
 //    [self leftStickDown:20];
     
@@ -693,11 +713,11 @@ TODO:
     
 //    [LandingSequence moveGimbal:((DJIAircraft*)[DJISDKManager product])];
     
-    self.imgView.image = [LandingSequence takeSnapshot:self];
+    [LandingSequence takeSnapshot:self];
     
-    CGSize imgSize = self.imgView.image.size;
-    NSString* text = [NSString stringWithFormat:@"HxW: %f %f", imgSize.height, imgSize.width];
-    [self showAlertViewWithTitle:@"Image Dimensions" withMessage:text];
+//    CGSize imgSize = self.imgView.image.size;
+//    NSString* text = [NSString stringWithFormat:@"HxW: %f %f", imgSize.height, imgSize.width];
+//    [self showAlertViewWithTitle:@"Image Dimensions" withMessage:text];
 }
 
 - (void)setSnapshot:(UIImage*) image {
