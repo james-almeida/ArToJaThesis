@@ -186,10 +186,6 @@
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil];
 
     if (fc) {
-        fc.yawControlMode = DJIVirtualStickYawControlModeAngularVelocity;
-        fc.rollPitchControlMode = DJIVirtualStickRollPitchControlModeVelocity;
-        fc.verticalControlMode = DJIVirtualStickVerticalControlModeVelocity;
-        
         [self autoEnterVirtualStickControl:fc];
         
     }
@@ -210,6 +206,11 @@
 - (void) autoEnterVirtualStickControl:(DJIFlightController*) fc {
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil];
     
+    fc.rollPitchCoordinateSystem = DJIVirtualStickFlightCoordinateSystemBody;
+    fc.yawControlMode = DJIVirtualStickYawControlModeAngularVelocity;
+    fc.rollPitchControlMode = DJIVirtualStickRollPitchControlModeVelocity;
+    fc.verticalControlMode = DJIVirtualStickVerticalControlModeVelocity;
+    
     [fc enableVirtualStickControlModeWithCompletion:^(NSError *error) {
         if (error) {
             [DemoUtility showAlertViewWithTitle:nil message:[NSString stringWithFormat:@"Enter Virtual Stick Mode Failed: %@", error.description] cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
@@ -223,7 +224,8 @@
         {
             [DemoUtility showAlertViewWithTitle:nil message:@"Enter Virtual Stick Mode:Succeeded, attempting takeoff." cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
             // [self autoTakeoff:fc];
-//            [self landDrone:_droneState drone:((DJIAircraft *)[DJISDKManager product])];
+            [NSThread sleepForTimeInterval:1];
+            [self landDrone:_droneState drone:((DJIAircraft *)[DJISDKManager product])];
         }
     }];
 
@@ -539,8 +541,9 @@ TODO:
 }
 
 - (void) landingStep:(UIImage*) snapshot{
+    
     NSInteger TRUE_X = 240;
-    NSInteger TRUE_Y = 180;
+    NSInteger TRUE_Y = 150; // camera is not perfectly centered
     DJIFlightControllerCurrentState* droneState = _droneState;
     
     // find center on image
@@ -552,8 +555,8 @@ TODO:
      // rotate appropriate
      
      // calculate error
-     NSInteger errX = [[coords objectAtIndex:0] integerValue] - TRUE_X;
-     NSInteger errY = [[coords objectAtIndex:1] integerValue] - TRUE_Y;
+     NSInteger errX = TRUE_X - [[coords objectAtIndex:0] integerValue];
+     NSInteger errY = TRUE_Y - [[coords objectAtIndex:1] integerValue];
     
      // get scale
      double height;
@@ -565,10 +568,10 @@ TODO:
     if (height == 0)
         height = 1.0; // meters
     
-    double scale = height * 0.1; //[self getScale:height];
+    double scale = height * 0.03; // 0.08 is good for a single step //[self getScale:height];
 
      // move drone
-    int moveX = errX*scale;
+    int moveX = errX*scale*-1; // these work when drone faces ELE Lab Door
     int moveY = errY*scale;
     
     [self moveInDirection:moveX withY:moveY];
@@ -577,28 +580,34 @@ TODO:
     self.coordTextView.text = output;
     
     [self bothSticksNeutral];
-    [NSThread sleepForTimeInterval:2];
-    self.imgView.image = nil;
 }
 
 
 - (void) landDrone:(DJIFlightControllerCurrentState*) droneState drone:(DJIAircraft*) drone {
-    UIImage* snapshot;
     
     // point gimbal straight downwards
     [LandingSequence moveGimbal:drone];
     
     [NSThread sleepForTimeInterval:0.1];
     
-    // take pictures while landing
-    for (int i = 0; i < 1; i++) {
-        snapshot =  [LandingSequence takeSnapshot:self];
-        
-    }
-    
-//    [self autoLeaveVirtualStickControl:_flightController];
+    [self landDroneRecursive:droneState count:3];
 }
 
+-(void) landDroneRecursive:(DJIFlightControllerCurrentState*) droneState count:(NSInteger) count {
+    if (count == 0) {
+        //    [self autoLeaveVirtualStickControl:_flightController];
+        //        self.imgView.image = nil;
+        return;
+    }
+    
+    [[VideoPreviewer instance] snapshotPreview:^(UIImage *snapshot) {
+        [self landingStep:snapshot];
+        [NSThread sleepForTimeInterval:3];
+        // lower Z
+        [self landDroneRecursive:droneState count:count-1];
+    }];
+    
+}
 
 #pragma mark DJISDKManagerDelegate Method
 

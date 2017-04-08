@@ -49,8 +49,8 @@
 + (UIImage*) takeSnapshot:(DJICameraViewController*) vc {
 
     [[VideoPreviewer instance] snapshotPreview:^(UIImage *snapshot) {
-//        [vc setSnapshot:snapshot];
-        [vc landingStep:snapshot];
+        [vc setSnapshot:snapshot];
+//        [vc landingStep:snapshot];
     }];
     
     return nil;
