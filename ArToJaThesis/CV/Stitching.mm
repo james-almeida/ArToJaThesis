@@ -100,15 +100,16 @@
     
     cv::Mat kernel = cv::Mat::ones(FILTER_SIZE, FILTER_SIZE, CV_32F) / (FILTER_SIZE * FILTER_SIZE);
     
-    cv::Mat filteredImage;
-    cv::filter2D(redMask, filteredImage, -1, kernel);
+    cv::Mat filteredRedImage, filteredBlueImage;
+    cv::filter2D(redMask, filteredRedImage, -1, kernel);
+    cv::filter2D(redMask, filteredBlueImage, -1, kernel);
     
     // 5. find index of max value
-    double minVal, maxVal;
-    cv::Point minPoint, maxPoint;
-    cv::minMaxLoc(filteredImage, &minVal, &maxVal, &minPoint, &maxPoint, cv::noArray());
+    cv::Point maxRedPoint, maxBluePoint;
+    cv::minMaxLoc(filteredRedImage, nil, nil, nil, &maxRedPoint, cv::noArray());
+    cv::minMaxLoc(filteredBlueImage, nil, nil, nil, &maxBluePoint, cv::noArray());
 
-    return @[[NSNumber numberWithInteger:maxPoint.x], [NSNumber numberWithInteger:maxPoint.y], [NSNumber numberWithFloat:maxVal]];
+    return @[[NSNumber numberWithInteger:maxRedPoint.x], [NSNumber numberWithInteger:maxRedPoint.y], [NSNumber numberWithInteger:maxBluePoint.x], [NSNumber numberWithInteger:maxBluePoint.y]];
 }
 
 + (UIImage *)imageWithColor:(UIImage*)image location:(NSArray*) coords{
