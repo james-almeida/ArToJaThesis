@@ -13,6 +13,8 @@
 #import "DJICameraViewController.h"
 
 #define COMPRESS_RATIO 0.2
+#define LOW 85
+#define FILTER_SIZE 30
 
 @implementation Stitching
 
@@ -47,9 +49,7 @@
 }
 
 + (UIImage*) getRedMask:(UIImage*) rawImage {
-    // compress image
-//    UIImage* compressedUIImage = [self compressedToRatio:rawImage ratio:COMPRESS_RATIO];
-    
+ 
     // convert to cv::Mat datatype
     // http://stackoverflow.com/questions/10254141/how-to-convert-from-cvmat-to-uiimage-in-objective-c/10254561
     
@@ -65,55 +65,29 @@
     
     cv::Mat redMask, blueMask, sumMask;
     
-    cv::inRange(hsvImage, cv::Scalar(110, 60, 60), cv::Scalar(130, 255, 255), redMask); // flip bc BGR
-    cv::inRange(hsvImage, cv::Scalar(-10, 60, 60), cv::Scalar(10, 255, 255), blueMask);
-    
-    if (blueMask.empty() || redMask.empty()) return NULL;
-    
-    cv::add(blueMask, redMask, sumMask);
-    
-    // 3. laplacian for sum
-    cv::Mat laplaceImage;
-    cv::Laplacian(sumMask, laplaceImage, -1, 15, 1, 0, cv::BORDER_DEFAULT);
-    laplaceImage = laplaceImage / 2;
-    
-    int n = 50; // 30
-    int m = 8; // 8
+    cv::inRange(hsvImage, cv::Scalar(110, LOW, LOW), cv::Scalar(130, 255, 255), redMask); // flip bc BGR
+    cv::inRange(hsvImage, cv::Scalar(-10, LOW, LOW), cv::Scalar(10, 255, 255), blueMask);
 
-    cv::Mat kernel = cv::Mat(n, n, CV_32F, -1.0);
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            kernel.at<float>(i,j) = -1.0;
-            if (i < n/2 + m && i > n/2 - m)
-                kernel.at<float>(i,j) = 1.0;
-            if (j < n/2 + m && j > n/2 - m)
-                kernel.at<float>(i,j) = 1.0;
-        }
-    }
+    cv::Mat kernel = cv::Mat::ones(FILTER_SIZE, FILTER_SIZE, CV_32F) / (FILTER_SIZE * FILTER_SIZE);
     
     cv::Mat filteredImage;
-    cv::filter2D(laplaceImage, filteredImage, -1, kernel);
+    cv::filter2D(redMask, filteredImage, -1, kernel);
     
-    return MatToUIImage(laplaceImage);
+    return MatToUIImage(filteredImage);
 }
 
 
 // TODO: use cv::function rather than cvFunction?
 + (NSArray*) findTargetCoordinates:(UIImage*) rawImage viewController:(DJICameraViewController*) vc {
     
-    // compress image
-//    UIImage* compressedUIImage = [self compressedToRatio:rawImage ratio:COMPRESS_RATIO];
-    
     // convert to cv::Mat datatype
     cv::Mat compressedMat;
-    UIImageToMat(rawImage, compressedMat); //[OpenCVConversion cvMat3FromUIImage:compressedUIImage];
-    
+    UIImageToMat(rawImage, compressedMat);
     
     // steps to find target
     // 1. convert to HSV
     cv::Mat hsvImage;
     cv::cvtColor(compressedMat, hsvImage, CV_BGR2HSV);
-    
     
     // 2. create mask for red & blue, sum together
     
@@ -121,39 +95,13 @@
     cv::Mat blueMask = cv::Mat::zeros(hsvImage.rows, hsvImage.cols, CV_32S);
     cv::Mat sumMask = cv::Mat::zeros(hsvImage.rows, hsvImage.cols, CV_32S);
     
-    cv::inRange(hsvImage, cv::Scalar(110, 60, 60), cv::Scalar(130, 255, 255), redMask); // flip bc BGR
-    cv::inRange(hsvImage, cv::Scalar(-10, 60, 60), cv::Scalar(10, 255, 255), blueMask);
+    cv::inRange(hsvImage, cv::Scalar(110, LOW, LOW), cv::Scalar(130, 255, 255), redMask); // flip bc BGR
+    cv::inRange(hsvImage, cv::Scalar(-10, LOW, LOW), cv::Scalar(10, 255, 255), blueMask);
     
-    if (blueMask.empty() || redMask.empty()) return NULL;
+    cv::Mat kernel = cv::Mat::ones(FILTER_SIZE, FILTER_SIZE, CV_32F) / (FILTER_SIZE * FILTER_SIZE);
     
-    cv::add(blueMask, redMask, sumMask);
-    
-    
-    // 3. laplacian for sum
-    cv::Mat laplaceImage = cv::Mat::zeros(sumMask.rows, sumMask.cols, CV_32S);;
-    cv::Laplacian(sumMask, laplaceImage, -1, 15, 1, 0, cv::BORDER_DEFAULT);
-    laplaceImage = laplaceImage / 2.0;
-    
-    
-    // 4. '+' shaped kernel
-    int n = 50;
-    int m = 8;
-
-    cv::Mat kernel = cv::Mat::zeros(n, n, CV_32F);
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            kernel.at<float>(i,j) = -1.0;
-            if (i < n/2 + m && i > n/2 - m)
-                kernel.at<float>(i,j) = 1.0;
-            if (j < n/2 + m && j > n/2 - m)
-                kernel.at<float>(i,j) = 1.0;
-        }
-    }
-    kernel = kernel / float(n * n);
-    
-    cv::Mat filteredImage; //= cv::Mat::zeros(laplaceImage.rows, laplaceImage.cols, CV_32F);
-    cv::filter2D(laplaceImage, filteredImage, -1, kernel);
-    
+    cv::Mat filteredImage;
+    cv::filter2D(redMask, filteredImage, -1, kernel);
     
     // 5. find index of max value
     double minVal, maxVal;

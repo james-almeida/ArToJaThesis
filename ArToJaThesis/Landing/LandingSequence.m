@@ -47,22 +47,12 @@
 }
 
 + (UIImage*) takeSnapshot:(DJICameraViewController*) vc {
-//    __block UIImage* output;
-    
-//    dispatch_semaphore_t sema = dispatch_semaphore_create(0);
-    
+
     [[VideoPreviewer instance] snapshotPreview:^(UIImage *snapshot) {
-//        dispatch_semaphore_signal(sema);
-//        output = snapshot;
 //        [vc setSnapshot:snapshot];
         [vc landingStep:snapshot];
     }];
     
-//    while (dispatch_semaphore_wait(sema, DISPATCH_TIME_NOW)) {
-//        [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:10]];
-//    }
-//    
-//    return output; // hxw = 360x480
     return nil;
 }
 
