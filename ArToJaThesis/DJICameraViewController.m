@@ -225,7 +225,12 @@
 //            [DemoUtility showAlertViewWithTitle:nil message:@"Enter Virtual Stick Mode:Succeeded, attempting takeoff." cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
             // [self autoTakeoff:fc];
             [NSThread sleepForTimeInterval:1];
-            [self landDrone:_droneState drone:((DJIAircraft *)[DJISDKManager product])];
+            fc.rollPitchCoordinateSystem = DJIVirtualStickFlightCoordinateSystemGround;
+            [NSThread sleepForTimeInterval:1];
+            [self moveBackToHome];
+            fc.rollPitchCoordinateSystem = DJIVirtualStickFlightCoordinateSystemBody;
+
+            //[self landDrone:_droneState drone:((DJIAircraft *)[DJISDKManager product])];
         }
     }];
 
@@ -383,6 +388,25 @@ TODO:
     MKMapPoint point1 = MKMapPointForCoordinate(homeCoord);
     MKMapPoint point2 = MKMapPointForCoordinate(droneCoord);
     CLLocationDistance distance = MKMetersBetweenMapPoints(point1, point2);
+    double longDiff = _droneState.aircraftLocation.longitude - _droneState.homeLocation.longitude;
+    double latDiff = _droneState.aircraftLocation.latitude - _droneState.homeLocation.latitude;
+    BOOL shouldFlyEast = ((longDiff) <= 0);
+    BOOL shouldFlySouth = ((latDiff) >= 0);
+    double longProp = (fabs(longDiff))/(fabs(longDiff) + fabs(latDiff));
+    double latProp = (fabs(latDiff))/(fabs(longDiff) + fabs(latDiff));
+    
+    if (shouldFlyEast) {
+        [self rightStickRight:(int) (10*longProp*distance)];
+    }
+    else {
+        [self rightStickLeft:(int) (10*longProp*distance)];
+    }
+    if (shouldFlySouth) {
+        [self rightStickDown:(int) (10*latProp*distance)];
+    }
+    else {
+        [self rightStickUp:(int) (10*latProp*distance)];
+    }
     
 }
 
@@ -757,18 +781,31 @@ TODO:
     self.droneLocation = state.aircraftLocation;
     self.batteryRemaining = state.remainingBattery;
     self.droneState = state;
-//    self.homeCoordLabel.text = state.homeLocation;
-//    self.droneCoordLabel.text = state.aircraftLocation;
+    self.homeCoordLabel.text = [NSString stringWithFormat:@"HOME: lat %f, long %f", state.homeLocation.latitude, state.homeLocation.longitude];
+    self.droneCoordLabel.text = [NSString stringWithFormat:@"DRONE: lat %f, long %f", self.droneLocation.latitude, self.droneLocation.longitude];
+    CLLocationCoordinate2D homeCoord = _droneState.homeLocation;
+    CLLocationCoordinate2D droneCoord = _droneState.aircraftLocation;
+    MKMapPoint point1 = MKMapPointForCoordinate(homeCoord);
+    MKMapPoint point2 = MKMapPointForCoordinate(droneCoord);
+    CLLocationDistance distance = MKMetersBetweenMapPoints(point1, point2);
+    double longDiff = _droneState.aircraftLocation.longitude - _droneState.homeLocation.longitude;
+    double latDiff = _droneState.aircraftLocation.latitude - _droneState.homeLocation.latitude;
+    BOOL shouldFlyEast = ((longDiff) <= 0);
+    BOOL shouldFlySouth = ((latDiff) >= 0);
+    double longProp = (fabs(longDiff))/(fabs(longDiff) + fabs(latDiff));
+    double latProp = (fabs(latDiff))/(fabs(longDiff) + fabs(latDiff));
     
-    if (self.batteryRemaining == DJIAircraftRemainingBatteryStateNormal) {
-        self.missionStatus.text = @"NORMAL";
-    }
-    if (self.batteryRemaining == DJIAircraftRemainingBatteryStateLow) {
-        self.missionStatus.text = @"LOW";
-    }
-    if (self.batteryRemaining == DJIAircraftRemainingBatteryStateVeryLow) {
-        self.missionStatus.text = @"VERY LOW";
-    }
+    self.missionStatus.text = [NSString stringWithFormat:@"D: %.2f, Long: %.2f, Lat: %.2f, E?=%d, S?=%d", distance, longProp, latProp,shouldFlyEast, shouldFlySouth];
+
+//    if (self.batteryRemaining == DJIAircraftRemainingBatteryStateNormal) {
+//        self.missionStatus.text = @"NORMAL";
+//    }
+//    if (self.batteryRemaining == DJIAircraftRemainingBatteryStateLow) {
+//        self.missionStatus.text = @"LOW";
+//    }
+//    if (self.batteryRemaining == DJIAircraftRemainingBatteryStateVeryLow) {
+//        self.missionStatus.text = @"VERY LOW";
+//    }
 }
 
 #pragma mark - IBAction Methods
