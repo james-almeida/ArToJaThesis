@@ -380,6 +380,10 @@ TODO:
     // yaw and throttle too?
 }
 
+/*
+ * Gets the coordinate of the drone and where it took off from, 
+ *
+ */
 - (void) moveBackToHome
 {
     CLLocationCoordinate2D homeCoord = _droneState.homeLocation;
