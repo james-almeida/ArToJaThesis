@@ -54,6 +54,7 @@
 @property(nonatomic, assign) CLLocationCoordinate2D droneLocation;
 @property(nonatomic, assign) DJIAircraftRemainingBatteryState batteryRemaining;
 @property(nonatomic, assign) BOOL shouldElevate;
+@property(nonatomic, assign) BOOL shouldLand;
 @property(nonatomic, assign) int flightLoopCount;
 @property(nonatomic, assign) int counter;
 @property(nonatomic, assign) NSTimeInterval SLEEP_TIME_BTWN_STICK_COMMANDS;
@@ -66,7 +67,7 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    self.SLEEP_TIME_BTWN_STICK_COMMANDS = 0.09;
+    self.SLEEP_TIME_BTWN_STICK_COMMANDS = 0.06;
 
     [[VideoPreviewer instance] setView: self.fpvPreviewView];
     [self registerApp];
@@ -210,6 +211,7 @@
     fc.yawControlMode = DJIVirtualStickYawControlModeAngularVelocity;
     fc.rollPitchControlMode = DJIVirtualStickRollPitchControlModeVelocity;
     fc.verticalControlMode = DJIVirtualStickVerticalControlModeVelocity;
+    //[fc setVirtualStickAdvancedModeEnabled:TRUE];
     
     [fc enableVirtualStickControlModeWithCompletion:^(NSError *error) {
         if (error) {
@@ -223,12 +225,12 @@
         else
         {
 //            [DemoUtility showAlertViewWithTitle:nil message:@"Enter Virtual Stick Mode:Succeeded, attempting takeoff." cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
-            // [self autoTakeoff:fc];
-            [NSThread sleepForTimeInterval:1];
-            fc.rollPitchCoordinateSystem = DJIVirtualStickFlightCoordinateSystemGround;
-            [NSThread sleepForTimeInterval:1];
-            [self moveBackToHome];
-            fc.rollPitchCoordinateSystem = DJIVirtualStickFlightCoordinateSystemBody;
+            [self autoTakeoff:fc];
+
+//            fc.rollPitchCoordinateSystem = DJIVirtualStickFlightCoordinateSystemGround;
+//            [NSThread sleepForTimeInterval:1];
+//            [self moveBackToHome];
+//            fc.rollPitchCoordinateSystem = DJIVirtualStickFlightCoordinateSystemBody;
 
             //[self landDrone:_droneState drone:((DJIAircraft *)[DJISDKManager product])];
         }
@@ -262,6 +264,7 @@
 - (void) autoTakeoff:(DJIFlightController*) fc {
 //    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil];
     _shouldElevate = true;
+    _shouldLand = false;
     
     [fc takeoffWithCompletion:^(NSError *error) {
         if (error) {
@@ -275,6 +278,7 @@
         } else {
 //            [DemoUtility showAlertViewWithTitle:nil message:[NSString stringWithFormat:@"Takeoff Success, beginning virtual flight with battery: %hhu", _droneState.remainingBattery] cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
             // [self virtualPilot:fc];
+            [NSThread sleepForTimeInterval:3];
             [self landDrone:_droneState drone:((DJIAircraft *)[DJISDKManager product])];
 
         }
@@ -359,19 +363,19 @@ TODO:
     Clean up UI
  */
 
-- (void) moveInDirection:(int) x withY:(int) y
+- (void) moveInDirection:(double) x withY:(double) y
 {
     CGPoint dir;
     
-    int xVal = ABS(x);
-    int yVal = ABS(y);
+    double xVal = fabs(x);
+    double yVal = fabs(y);
     float total = MAX(xVal, yVal);
     
     for (int i=0; i<total; i++) {
         if (i < xVal)
-            dir.x = (0.02) * [self getStickScale:i withLimit:(xVal)] * (x / xVal);
+            dir.x = (0.03) * [self getStickScale:i withLimit:(xVal)] * (x / xVal);
         if (i < yVal)
-            dir.y = (0.02) * [self getStickScale:i withLimit:(yVal)] * (y / yVal);
+            dir.y = (0.03) * [self getStickScale:i withLimit:(yVal)] * (y / yVal);
         [self setXVelocity:dir.y andYVelocity:dir.x];
         
         [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
@@ -425,8 +429,8 @@ TODO:
     [self setXVelocity:-dir.y andYVelocity:dir.x];
 }
 
-- (double) getStickScale:(int) prog withLimit:(int) total {
-    return 2.0 * (total/2.0 - abs(prog-(total/2))) / total;
+- (double) getStickScale:(int) prog withLimit:(double) total {
+    return 2.0 * (total/2.0 - fabs(prog-(total/2))) / total;
 }
 
 
@@ -437,7 +441,7 @@ TODO:
     for (int i=0; i<total; i++) {
     
         dir.x = 0;
-        dir.y = (-0.15) * [self getStickScale:i withLimit:total];
+        dir.y = (-0.2) * [self getStickScale:i withLimit:total];
         [self setXVelocity:-dir.y andYVelocity:dir.x];
         
         [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
@@ -452,7 +456,7 @@ TODO:
     for (int i=0; i<total; i++) {
         
         dir.x = 0;
-        dir.y = (0.15) * [self getStickScale:i withLimit:total];
+        dir.y = (0.2) * [self getStickScale:i withLimit:total];
         [self setXVelocity:-dir.y andYVelocity:dir.x];
         
         [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
@@ -465,7 +469,7 @@ TODO:
     
     for (int i=0; i<total; i++) {
         
-        dir.x = (0.15) * [self getStickScale:i withLimit:total];
+        dir.x = (0.2) * [self getStickScale:i withLimit:total];
         dir.y = 0;
         [self setXVelocity:-dir.y andYVelocity:dir.x];
         
@@ -479,7 +483,7 @@ TODO:
     CGPoint dir;
     
     for (int i=0; i<total; i++) {
-        dir.x = (-0.15) * [self getStickScale:i withLimit:total];
+        dir.x = (-0.2) * [self getStickScale:i withLimit:total];
         dir.y = 0;
         [self setXVelocity:-dir.y andYVelocity:dir.x];
         
@@ -518,9 +522,9 @@ TODO:
 {
     CGPoint dir;
     for (int i=0; i<total; i++) {
-        
+        // 2.0 * (total/2.0 - fabs(prog-(total/2))) / total;
         dir.x = 0;
-        dir.y = (-0.2) * [self getStickScale:i withLimit:total];
+        dir.y = (-0.8*i*1.0/total); //* [self getStickScale:i withLimit:total];
         [self setThrottle:dir.y andYaw:dir.x];
         
         [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
@@ -582,10 +586,10 @@ TODO:
     }
 }
 
-- (void) landingStep:(UIImage*) snapshot{
+- (double) landingStep:(UIImage*) snapshot andScale:(int)count{
     
-    NSInteger TRUE_X = 220;
-    NSInteger TRUE_Y = 130; // camera is not perfectly centered
+    NSInteger TRUE_X = 240;
+    NSInteger TRUE_Y = 160; // camera is not perfectly centered
     DJIFlightControllerCurrentState* droneState = _droneState;
     
     // find center on image
@@ -598,7 +602,7 @@ TODO:
     
     // did not find pixel
     if (rx == 0 && ry == 0)
-        return;
+        return 100.0;
      
      // calculate error
      NSInteger errX = TRUE_X - rx;
@@ -610,11 +614,9 @@ TODO:
          height = droneState.ultrasonicHeight;
      else
          height = droneState.altitude; // very inaccurate
+
     
-    if (height == 0)
-        height = 1.0; // meters
-    
-    double scale = 0.25; //[self getScale:height];
+    double scale = 0.25*(count/50.0); //[self getScale:height];
     
     // check rotation
 //    double angle = [self getAngle:coords] * 0.1;
@@ -624,17 +626,52 @@ TODO:
 //        [self leftStickRight:angle];
 
     // move drone
-    int moveX = errX*scale*-1; // these work when drone faces ELE Lab Door
-    int moveY = errY*scale;
+    double moveX = errX*scale*-1; // these work when drone faces ELE Lab Door
+    double moveY = errY*scale;
     
     // dead zone near middle
-    if (moveX > 3 || moveY > 3)
-        [self moveInDirection:moveX withY:moveY];
+//    if (moveX > 3 || moveY > 3)
+//        [self moveInDirection:moveX withY:moveY];
+
+    if (fabs(moveX) <= 3)
+        moveX = 0.0;
+    if (fabs(moveY) <= 3)
+        moveY = 0.0;
     
-    NSString* output = [NSString stringWithFormat:@"Location: (%d, %d)\n Height: %f",moveX, moveY, height];
+    if (height < 0.65) {
+        errX = 0;
+        errY = 0;
+    }
+    else if (fabs(moveX) > 0.1 || fabs(moveY) > 0.1)
+        [self moveInDirection:moveX withY:moveY];
+
+        
+//        [self bothSticksNeutral];
+//        [self leftStickDownGentle:60];
+//        self.missionStatus.text = @"YOLO LANDING!";
+//        [NSThread sleepForTimeInterval:2];
+//        _shouldLand = false;
+        
+        
+//        DJIFlightController* fc = self.flightController;
+//        [fc turnOffMotorsWithCompletion:^(NSError *error) {
+//            if (error) {
+//                double delayInSeconds = 1.0;
+//                dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+//                dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+//                    [self landingStep:snapshot andScale:count];
+//                });
+//                
+//            }
+//        }];
+    
+    
+    NSString* output = [NSString stringWithFormat:@"Location: (%f, %f)\n Height: %f",moveX, moveY, height];
     self.coordTextView.text = output;
     
-    [self bothSticksNeutral];
+    if (height >= 0.6)
+        [self bothSticksNeutral];
+    return sqrt((errX * errX) + (errY * errY));
 }
 
 -(double) getAngle:(NSArray*) coords
@@ -661,36 +698,47 @@ TODO:
     
     // point gimbal straight downwards
     [LandingSequence moveGimbal:drone];
-    
+    _shouldLand = true;
     [NSThread sleepForTimeInterval:0.1];
     
-    [self landDroneRecursive:droneState count:5];
+    [self landDroneRecursive:droneState count:50];
 }
 
--(void) landDroneRecursive:(DJIFlightControllerCurrentState*) droneState count:(NSInteger) count {
+-(void) landDroneRecursive:(DJIFlightControllerCurrentState*) droneState count:(int) count {
     if (count == 0) {
         //    [self autoLeaveVirtualStickControl:_flightController];
         //    self.imgView.image = nil;
-        
-        UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil];
-
-        DJIFlightController* fc = _flightController;
-        [fc autoLandingWithCompletion:^(NSError * _Nullable error) {
-            if (error) {
-                [DemoUtility showAlertViewWithTitle:nil message:[NSString stringWithFormat:@"Landing Failed: %@", error.description] cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
-            }
-        }];
+//
+//        UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil];
+//
+//        DJIFlightController* fc = _flightController;
+//        [fc autoLandingWithCompletion:^(NSError * _Nullable error) {
+//            if (error) {
+//                [DemoUtility showAlertViewWithTitle:nil message:[NSString stringWithFormat:@"Landing Failed: %@", error.description] cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
+//            }
+//        }];
         return;
     }
     
     [[VideoPreviewer instance] snapshotPreview:^(UIImage *snapshot) {
-        [self landingStep:snapshot];
-        [NSThread sleepForTimeInterval:0.5];
-        if (count % 3 == 0) {
-            [self leftStickDownGentle:15]; // might want to decrease less at lower altitudes
-            [NSThread sleepForTimeInterval:1];
+        self.missionStatus.text = [NSString stringWithFormat:@"%d", count];
+        double error = [self landingStep:snapshot andScale:count];
+        [NSThread sleepForTimeInterval:0.75];
+        // If we're within 16 pixels of the target, we can lower
+        if (error < 1.0) {
+            [self leftStickDownGentle:60];
+            [NSThread sleepForTimeInterval:2];
         }
-        [self landDroneRecursive:droneState count:count-1];
+        else if (error < 16.0) {
+            [self leftStickDown:10*(50.0/count)];
+            [NSThread sleepForTimeInterval:.2];
+            [self landDroneRecursive:droneState count:count-5];
+        }
+        else {
+            [self landDroneRecursive:droneState count:count];
+        }
+//        if (_shouldLand)
+//            [self landDroneRecursive:droneState count:count-1];
     }];
     
 }
@@ -799,7 +847,7 @@ TODO:
     double longProp = (fabs(longDiff))/(fabs(longDiff) + fabs(latDiff));
     double latProp = (fabs(latDiff))/(fabs(longDiff) + fabs(latDiff));
     
-    self.missionStatus.text = [NSString stringWithFormat:@"D: %.2f, Long: %.2f, Lat: %.2f, E?=%d, S?=%d", distance, longProp, latProp,shouldFlyEast, shouldFlySouth];
+    //self.missionStatus.text = [NSString stringWithFormat:@"D: %.2f, Long: %.2f, Lat: %.2f, E?=%d, S?=%d", distance, longProp, latProp,shouldFlyEast, shouldFlySouth];
 
 //    if (self.batteryRemaining == DJIAircraftRemainingBatteryStateNormal) {
 //        self.missionStatus.text = @"NORMAL";
