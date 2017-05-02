@@ -64,16 +64,13 @@
 
 @implementation DJICameraViewController
 
-- (void)viewDidAppear:(BOOL)animated
-{
+- (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     self.SLEEP_TIME_BTWN_STICK_COMMANDS = 0.06;
 
     [[VideoPreviewer instance] setView: self.fpvPreviewView];
     [self registerApp];
 }
-
-
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -93,9 +90,7 @@
     }
 }
 
-
-- (void)viewWillDisappear:(BOOL)animated
-{
+- (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     [[VideoPreviewer instance] setView:nil];
     
@@ -105,11 +100,13 @@
     }
 }
 
-
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+
+
 
 
 
@@ -156,13 +153,25 @@
 
 
 
+#pragma mark - Custom exit/ending methods
 
-#pragma mark - Custom Methods
-/* Should perform the following upon tapping "START MISSION":
- * * * 1) Fetch flight controller without error
- * * * 2) Set the control modes for yaw, pitch, roll, and vertical control
- * * * 3) Put drone in virtual stick control mode
- */
+- (void) autoLeaveVirtualStickControl:(DJIFlightController*) fc {
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil];
+    self.imgView.image = nil;
+    [fc disableVirtualStickControlModeWithCompletion:^(NSError * _Nullable error) {
+        if (error) {
+            [DemoUtility showAlertViewWithTitle:nil message:[NSString stringWithFormat:@"Leave Virtual Stick Mode Failed: %@", error.description] cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
+            double delayInSeconds = 5.0;
+            dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+            dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+                [self autoLeaveVirtualStickControl:fc];
+            });
+        } else {
+            [DemoUtility showAlertViewWithTitle:nil message:[NSString stringWithFormat:@"Leave Virtual Stick Mode Succeeded: %@", error.description] cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
+        }
+    }];
+}
+
 - (IBAction)onEndButtonClicked:(id)sender {
     DJIFlightController* fc = self.flightController; //[DemoUtility fetchFlightController];
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil];
@@ -176,6 +185,10 @@
         [DemoUtility showAlertViewWithTitle:nil message:@"Component not exist." cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
     }
 }
+
+
+
+#pragma mark - Custom Methods
 
 /* Should perform the following upon tapping "START MISSION":
  * * * 1) Fetch flight controller without error
@@ -224,35 +237,13 @@
         }
         else
         {
-//            [DemoUtility showAlertViewWithTitle:nil message:@"Enter Virtual Stick Mode:Succeeded, attempting takeoff." cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
             [self autoTakeoff:fc];
-
-//            fc.rollPitchCoordinateSystem = DJIVirtualStickFlightCoordinateSystemGround;
-//            [NSThread sleepForTimeInterval:1];
-//            [self moveBackToHome];
-//            fc.rollPitchCoordinateSystem = DJIVirtualStickFlightCoordinateSystemBody;
+//            [DemoUtility showAlertViewWithTitle:nil message:@"Enter Virtual Stick Mode:Succeeded, attempting takeoff." cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
 
             //[self landDrone:_droneState drone:((DJIAircraft *)[DJISDKManager product])];
         }
     }];
 
-}
-
-- (void) autoLeaveVirtualStickControl:(DJIFlightController*) fc {
-    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil];
-    self.imgView.image = nil;
-    [fc disableVirtualStickControlModeWithCompletion:^(NSError * _Nullable error) {
-        if (error) {
-            [DemoUtility showAlertViewWithTitle:nil message:[NSString stringWithFormat:@"Leave Virtual Stick Mode Failed: %@", error.description] cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
-            double delayInSeconds = 5.0;
-            dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-            dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-                [self autoLeaveVirtualStickControl:fc];
-            });
-        } else {
-            [DemoUtility showAlertViewWithTitle:nil message:[NSString stringWithFormat:@"Leave Virtual Stick Mode Succeeded: %@", error.description] cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
-        }
-    }];
 }
 
 /* Will be called automatically by autoEnterVirtualStickControl().
@@ -262,13 +253,11 @@
  * * * 2) Call the virtualPilot method
  */
 - (void) autoTakeoff:(DJIFlightController*) fc {
-//    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil];
     _shouldElevate = true;
     _shouldLand = false;
     
     [fc takeoffWithCompletion:^(NSError *error) {
         if (error) {
-//            [DemoUtility showAlertViewWithTitle:nil message:[NSString stringWithFormat:@"Takeoff: %@", error.description] cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
             double delayInSeconds = 5.0;
             dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
             dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
@@ -276,15 +265,14 @@
             });
                 
         } else {
-//            [DemoUtility showAlertViewWithTitle:nil message:[NSString stringWithFormat:@"Takeoff Success, beginning virtual flight with battery: %hhu", _droneState.remainingBattery] cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
-            // [self virtualPilot:fc];
-            [NSThread sleepForTimeInterval:3];
-            [self landDrone:_droneState drone:((DJIAircraft *)[DJISDKManager product])];
-
+            [self virtualPilot:fc];
+//            [NSThread sleepForTimeInterval:3];
+//            [self landDrone:_droneState drone:((DJIAircraft *)[DJISDKManager product])];
         }
     }];
 
 }
+
 
 /* Will be called automatically after a successful takeoff.
  * Should perform the following upon being called:
@@ -299,57 +287,61 @@
 - (void) virtualPilot:(DJIFlightController*) fc {
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil];
     
-    if (self.batteryRemaining == DJIAircraftRemainingBatteryStateLow) {
-        // Begin landing sequence
-        // [LandingSequence landDrone: drone:<#(DJIAircraft *)#>]
-    }
-    
     // Elevate drone for 6 seconds at a rate of ~10Hz
     if (_shouldElevate) {
-        [self leftStickUp:10];
+        [self leftStickUp:200];
     }
     
-//    [self landDrone:_droneState drone:((DJIAircraft *)[DJISDKManager product])];
+    [self bothSticksNeutral];
+    [NSThread sleepForTimeInterval:2];
     
+    [self rightStickUp:100];
     
     [self bothSticksNeutral];
     [NSThread sleepForTimeInterval:2];
     
-    [self rightStickUp:10];
+    [self rightStickDown:120];
     
     [self bothSticksNeutral];
     [NSThread sleepForTimeInterval:2];
     
-    [self rightStickDown:10];
-    
-    [self bothSticksNeutral];
-    [NSThread sleepForTimeInterval:2];
-    
-    [self rightStickLeft:10];
-    
-    [self bothSticksNeutral];
-    [NSThread sleepForTimeInterval:2];
-    
-    
-    [self rightStickRight:10];
-
-
-    [self bothSticksNeutral];
-    [NSThread sleepForTimeInterval:5];
+//    [self rightStickLeft:100];
+//    
+//    [self bothSticksNeutral];
+//    [NSThread sleepForTimeInterval:2];
+//    
+//    
+//    [self rightStickRight:120];
+//
+//
+//    [self bothSticksNeutral];
+//    [NSThread sleepForTimeInterval:2];
     
     _flightLoopCount += 1;
-    if (_batteryRemaining == DJIAircraftRemainingBatteryStateLow) {
-        [self leftStickDown:150];
-        
-        [self bothSticksNeutral];
-        
-        // once landing is done, wait for battery to be > 0.75
-        while (_droneState.remainingBattery != DJIAircraftRemainingBatteryStateNormal) {
-            [NSThread sleepForTimeInterval:5.0];
-            [DemoUtility showAlertViewWithTitle:nil message:@"Battery too low to fly." cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
-        }
-        _shouldElevate = true;
-        [self virtualPilot:fc];
+    self.missionStatus.text = @"About to begin landing";
+    
+    if (_batteryRemaining == DJIAircraftRemainingBatteryStateNormal) {
+        // Begin landing sequence
+        fc.rollPitchCoordinateSystem = DJIVirtualStickFlightCoordinateSystemGround;
+        [NSThread sleepForTimeInterval:1];
+        self.missionStatus.text = @"Moving Home";
+        [self moveBackToHome];
+        [NSThread sleepForTimeInterval:10];
+        fc.rollPitchCoordinateSystem = DJIVirtualStickFlightCoordinateSystemBody;
+        [LandingSequence moveGimbal:((DJIAircraft*)[DJISDKManager product])];
+//        [NSThread sleepForTimeInterval:15];
+//        self.missionStatus.text = @"Landing";
+//        [self landDrone:_droneState drone:((DJIAircraft *)[DJISDKManager product])];
+//        
+//        [self bothSticksNeutral];
+//        
+//        // once landing is done, wait for battery to be > 0.75
+//        while (_droneState.remainingBattery != DJIAircraftRemainingBatteryStateLow) {
+//            [NSThread sleepForTimeInterval:5.0];
+//            [DemoUtility showAlertViewWithTitle:nil message:@"Battery too low to fly." cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
+//        }
+//        _shouldElevate = true;
+//        [self virtualPilot:fc];
     }
     
     else {
@@ -404,17 +396,18 @@ TODO:
     double latProp = (fabs(latDiff))/(fabs(longDiff) + fabs(latDiff));
     
     if (shouldFlyEast) {
-        [self rightStickRight:(int) (10*longProp*distance)];
+        [self rightStickRight:(int) (500*longProp*distance)];
     }
     else {
-        [self rightStickLeft:(int) (10*longProp*distance)];
+        [self rightStickLeft:(int) (500*longProp*distance)];
     }
     if (shouldFlySouth) {
-        [self rightStickDown:(int) (10*latProp*distance)];
+        [self rightStickDown:(int) (500*latProp*distance)];
     }
     else {
-        [self rightStickUp:(int) (10*latProp*distance)];
+        [self rightStickUp:(int) (500*latProp*distance)];
     }
+    return;
     
 }
 
@@ -728,17 +721,16 @@ TODO:
         if (error < 1.0) {
             [self leftStickDownGentle:60];
             [NSThread sleepForTimeInterval:2];
+            [self landDroneRecursive:droneState count:0];
         }
-        else if (error < 16.0) {
+        else if (error < 30.0) {
             [self leftStickDown:10*(50.0/count)];
             [NSThread sleepForTimeInterval:.2];
             [self landDroneRecursive:droneState count:count-5];
         }
         else {
-            [self landDroneRecursive:droneState count:count];
+            [self landDroneRecursive:droneState count:count-1];
         }
-//        if (_shouldLand)
-//            [self landDroneRecursive:droneState count:count-1];
     }];
     
 }
