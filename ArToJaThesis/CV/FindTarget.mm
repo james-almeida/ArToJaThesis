@@ -1,14 +1,9 @@
 //
-//  Stitching.m
-//  PanoDemo
-//
-//  Created by DJI on 15/7/30.
-//  Copyright (c) 2015年 DJI. All rights reserved.
+//  FindTarget.m
 //
 
-#import "Stitching.h"
-#import "StitchingWrapper.h"
-#import "OpenCVConversion.h"
+
+#import "FindTarget.h"
 #import "opencv2/imgcodecs/ios.h"
 #import "DJICameraViewController.h"
 
@@ -16,39 +11,10 @@
 #define LOW 85
 #define FILTER_SIZE 30
 
-@implementation Stitching
+@implementation FindTarget
 
-+ (bool) stitchImageWithArray:(NSMutableArray*)imageArray andResult:(cv::Mat &) result {
-    
-    NSMutableArray* compressedImageArray =[NSMutableArray new];
-    for(UIImage *rawImage in imageArray){
-        UIImage *compressedImage=[self compressedToRatio:rawImage ratio:COMPRESS_RATIO];
-        [compressedImageArray addObject:compressedImage];
-    }
-    [imageArray removeAllObjects];
-    
-    
-    if ([compressedImageArray count]==0) {
-        NSLog (@"imageArray is empty");
-        return false;
-    }
-    cv::vector<cv::Mat> matArray;
-    
-    for (id image in compressedImageArray) {
-        if ([image isKindOfClass: [UIImage class]]) {
-            cv::Mat matImage = [OpenCVConversion cvMat3FromUIImage:image];
-            matArray.push_back(matImage);
-        }
-    }
-    NSLog(@"Stitching...");
-    if(!stitch(matArray, result)){
-        return false;
-    }
-    
-    return true;
-}
-
-+ (UIImage*) getRedMask:(UIImage*) rawImage {
+// return image showing intermediary steps of vision processing
++ (UIImage*) getImageMask:(UIImage*) rawImage {
  
     // convert to cv::Mat datatype
     // http://stackoverflow.com/questions/10254141/how-to-convert-from-cvmat-to-uiimage-in-objective-c/10254561
@@ -76,21 +42,17 @@
     return MatToUIImage(filteredImage);
 }
 
-
-// TODO: use cv::function rather than cvFunction?
+// find the expected target coordinates for the red and blue circles
 + (NSArray*) findTargetCoordinates:(UIImage*) rawImage viewController:(DJICameraViewController*) vc {
     
-    // convert to cv::Mat datatype
     cv::Mat compressedMat;
     UIImageToMat(rawImage, compressedMat);
     
-    // steps to find target
     // 1. convert to HSV
     cv::Mat hsvImage;
     cv::cvtColor(compressedMat, hsvImage, CV_BGR2HSV);
     
     // 2. create mask for red & blue, sum together
-    
     cv::Mat redMask = cv::Mat::zeros(hsvImage.rows, hsvImage.cols, CV_32S);
     cv::Mat blueMask = cv::Mat::zeros(hsvImage.rows, hsvImage.cols, CV_32S);
     cv::Mat sumMask = cv::Mat::zeros(hsvImage.rows, hsvImage.cols, CV_32S);
@@ -112,6 +74,7 @@
     return @[[NSNumber numberWithInteger:maxRedPoint.x], [NSNumber numberWithInteger:maxRedPoint.y], [NSNumber numberWithInteger:maxBluePoint.x], [NSNumber numberWithInteger:maxBluePoint.y]];
 }
 
+// draw highlighted pixel over target coordinates
 + (UIImage *)imageWithColor:(UIImage*)image location:(NSArray*) coords{
         
     UIImage* outputImage = image; //[UIImage imageWithData:UIImagePNGRepresentation(image)];
@@ -120,10 +83,8 @@
     UIGraphicsBeginImageContext(outputImage.size);
     CGContextRef context = UIGraphicsGetCurrentContext();
     
-    //Save current status of graphics context
     CGContextSaveGState(context);
     CGContextDrawImage(context, imageRect, outputImage.CGImage);
-    //    And then just draw a point on it wherever you want like this:
     
     NSInteger size = 10;
     CGContextSetRGBFillColor(context, 1.0 , 0.0, 0.0, 1);

@@ -14,19 +14,12 @@
 
 @class DJICameraViewController;
 
-@protocol LandingSequenceDelegate <NSObject>
-@optional
-+ (void) setSnapshot:(UIImage *)snapshot;
-+ (void) landingStep:(UIImage*) snapshot;
-@end
-
 @interface LandingSequence : NSObject
 
-+ (void) landDrone:(DJIFlightControllerCurrentState*) droneState drone:(DJIAircraft*) drone;
+//+ (void) landDrone:(DJIFlightControllerCurrentState*) droneState drone:(DJIAircraft*) drone;
 + (bool) isLanded: (DJIFlightControllerCurrentState*) droneState ;
 + (void) moveGimbal:(DJIAircraft*) drone;
-+ (UIImage*) takeSnapshot:(DJICameraViewController*) vc;
-
++ (void) takeSnapshot:(DJICameraViewController*) vc;
     
 @end
 
