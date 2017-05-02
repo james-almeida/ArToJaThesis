@@ -45,13 +45,11 @@
 }
 
 // testing code: takes a snapshot from the drone's camera
-+ (UIImage*) takeSnapshot:(DJICameraViewController*) vc {
++ (void) takeSnapshot:(DJICameraViewController*) vc {
 
     [[VideoPreviewer instance] snapshotPreview:^(UIImage *snapshot) {
         [vc setSnapshot:snapshot];
     }];
-    
-    return nil;
 }
 
 // check to see if drone is currently in air

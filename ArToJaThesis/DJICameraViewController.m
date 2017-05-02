@@ -785,17 +785,6 @@ TODO:
     self.droneState = state;
     self.homeCoordLabel.text = [NSString stringWithFormat:@"HOME: lat %f, long %f", state.homeLocation.latitude, state.homeLocation.longitude];
     self.droneCoordLabel.text = [NSString stringWithFormat:@"DRONE: lat %f, long %f", self.droneLocation.latitude, self.droneLocation.longitude];
-    CLLocationCoordinate2D homeCoord = _droneState.homeLocation;
-    CLLocationCoordinate2D droneCoord = _droneState.aircraftLocation;
-    MKMapPoint point1 = MKMapPointForCoordinate(homeCoord);
-    MKMapPoint point2 = MKMapPointForCoordinate(droneCoord);
-    CLLocationDistance distance = MKMetersBetweenMapPoints(point1, point2);
-    double longDiff = _droneState.aircraftLocation.longitude - _droneState.homeLocation.longitude;
-    double latDiff = _droneState.aircraftLocation.latitude - _droneState.homeLocation.latitude;
-    BOOL shouldFlyEast = ((longDiff) <= 0);
-    BOOL shouldFlySouth = ((latDiff) >= 0);
-    double longProp = (fabs(longDiff))/(fabs(longDiff) + fabs(latDiff));
-    double latProp = (fabs(latDiff))/(fabs(longDiff) + fabs(latDiff));
 }
 
 #pragma mark - IBAction Methods

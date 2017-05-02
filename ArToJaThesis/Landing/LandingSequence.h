@@ -19,7 +19,7 @@
 //+ (void) landDrone:(DJIFlightControllerCurrentState*) droneState drone:(DJIAircraft*) drone;
 + (bool) isLanded: (DJIFlightControllerCurrentState*) droneState ;
 + (void) moveGimbal:(DJIAircraft*) drone;
-+ (UIImage*) takeSnapshot:(DJICameraViewController*) vc;
++ (void) takeSnapshot:(DJICameraViewController*) vc;
     
 @end
 
