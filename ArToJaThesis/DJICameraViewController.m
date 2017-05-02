@@ -12,7 +12,7 @@
 #import <DJISDK/DJISDK.h>
 #import "Frameworks/VideoPreviewer/VideoPreviewer/VideoPreviewer.h"
 #import "LandingSequence.h"
-#import "Stitching.h"
+#import "FindTarget.h"
 
 #define weakSelf(__TARGET__) __weak typeof(self) __TARGET__=self
 #define weakReturn(__TARGET__) if(__TARGET__==nil)return;
@@ -301,16 +301,13 @@
     
     if (self.batteryRemaining == DJIAircraftRemainingBatteryStateLow) {
         // Begin landing sequence
-        // [LandingSequence landDrone: drone:<#(DJIAircraft *)#>]
+        [self landDrone: _droneState drone:((DJIAircraft*)[DJISDKManager product])];
     }
     
     // Elevate drone for 6 seconds at a rate of ~10Hz
     if (_shouldElevate) {
         [self leftStickUp:10];
     }
-    
-//    [self landDrone:_droneState drone:((DJIAircraft *)[DJISDKManager product])];
-    
     
     [self bothSticksNeutral];
     [NSThread sleepForTimeInterval:2];
@@ -380,8 +377,6 @@ TODO:
         
         [NSThread sleepForTimeInterval:_SLEEP_TIME_BTWN_STICK_COMMANDS];
     }
-    
-    // yaw and throttle too?
 }
 
 /*
@@ -593,9 +588,7 @@ TODO:
     DJIFlightControllerCurrentState* droneState = _droneState;
     
     // find center on image
-    NSArray* coords = [Stitching findTargetCoordinates: snapshot viewController:nil];
-//    snapshot = [Stitching imageWithColor:snapshot location:coords];
-//    self.imgView.image = snapshot;
+    NSArray* coords = [FindTarget findTargetCoordinates: snapshot viewController:nil];
     
     int rx = (int) [[coords objectAtIndex:0] integerValue];
     int ry = (int) [[coords objectAtIndex:1] integerValue];
@@ -628,10 +621,6 @@ TODO:
     // move drone
     double moveX = errX*scale*-1; // these work when drone faces ELE Lab Door
     double moveY = errY*scale;
-    
-    // dead zone near middle
-//    if (moveX > 3 || moveY > 3)
-//        [self moveInDirection:moveX withY:moveY];
 
     if (fabs(moveX) <= 3)
         moveX = 0.0;
@@ -644,26 +633,6 @@ TODO:
     }
     else if (fabs(moveX) > 0.1 || fabs(moveY) > 0.1)
         [self moveInDirection:moveX withY:moveY];
-
-        
-//        [self bothSticksNeutral];
-//        [self leftStickDownGentle:60];
-//        self.missionStatus.text = @"YOLO LANDING!";
-//        [NSThread sleepForTimeInterval:2];
-//        _shouldLand = false;
-        
-        
-//        DJIFlightController* fc = self.flightController;
-//        [fc turnOffMotorsWithCompletion:^(NSError *error) {
-//            if (error) {
-//                double delayInSeconds = 1.0;
-//                dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-//                dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-//                    [self landingStep:snapshot andScale:count];
-//                });
-//                
-//            }
-//        }];
     
     
     NSString* output = [NSString stringWithFormat:@"Location: (%f, %f)\n Height: %f",moveX, moveY, height];
@@ -698,7 +667,6 @@ TODO:
     
     // point gimbal straight downwards
     [LandingSequence moveGimbal:drone];
-    _shouldLand = true;
     [NSThread sleepForTimeInterval:0.1];
     
     [self landDroneRecursive:droneState count:50];
@@ -706,17 +674,6 @@ TODO:
 
 -(void) landDroneRecursive:(DJIFlightControllerCurrentState*) droneState count:(int) count {
     if (count == 0) {
-        //    [self autoLeaveVirtualStickControl:_flightController];
-        //    self.imgView.image = nil;
-//
-//        UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleCancel handler:nil];
-//
-//        DJIFlightController* fc = _flightController;
-//        [fc autoLandingWithCompletion:^(NSError * _Nullable error) {
-//            if (error) {
-//                [DemoUtility showAlertViewWithTitle:nil message:[NSString stringWithFormat:@"Landing Failed: %@", error.description] cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
-//            }
-//        }];
         return;
     }
     
@@ -737,8 +694,6 @@ TODO:
         else {
             [self landDroneRecursive:droneState count:count];
         }
-//        if (_shouldLand)
-//            [self landDroneRecursive:droneState count:count-1];
     }];
     
 }
@@ -779,9 +734,6 @@ TODO:
 
 
 
-
-
-
 #pragma mark - DJIBaseProductDelegate Method
 
 -(void) componentWithKey:(NSString *)key changedFrom:(DJIBaseComponent *)oldComponent to:(DJIBaseComponent *)newComponent {
@@ -793,8 +745,6 @@ TODO:
         }
     }
 }
-
-
 
 
 #pragma mark - DJICameraDelegate
@@ -846,18 +796,6 @@ TODO:
     BOOL shouldFlySouth = ((latDiff) >= 0);
     double longProp = (fabs(longDiff))/(fabs(longDiff) + fabs(latDiff));
     double latProp = (fabs(latDiff))/(fabs(longDiff) + fabs(latDiff));
-    
-    //self.missionStatus.text = [NSString stringWithFormat:@"D: %.2f, Long: %.2f, Lat: %.2f, E?=%d, S?=%d", distance, longProp, latProp,shouldFlyEast, shouldFlySouth];
-
-//    if (self.batteryRemaining == DJIAircraftRemainingBatteryStateNormal) {
-//        self.missionStatus.text = @"NORMAL";
-//    }
-//    if (self.batteryRemaining == DJIAircraftRemainingBatteryStateLow) {
-//        self.missionStatus.text = @"LOW";
-//    }
-//    if (self.batteryRemaining == DJIAircraftRemainingBatteryStateVeryLow) {
-//        self.missionStatus.text = @"VERY LOW";
-//    }
 }
 
 #pragma mark - IBAction Methods
@@ -871,9 +809,6 @@ TODO:
     
     [LandingSequence moveGimbal:((DJIAircraft*)[DJISDKManager product])];
     
-//    [[VideoPreviewer instance] snapshotPreview:^(UIImage *snapshot) {
-//        [self setSnapshot:snapshot];
-//    }];
     
     [LandingSequence takeSnapshot:self];
 
@@ -894,11 +829,11 @@ TODO:
         target = [UIImage imageNamed: @"target"];
     
     // get coordinates
-    NSArray* coords = [Stitching findTargetCoordinates:target viewController:self];
+    NSArray* coords = [FindTarget findTargetCoordinates:target viewController:self];
     
     // display result, with highlighted center
-    UIImage* result = [Stitching getRedMask:target];
-    result = [Stitching imageWithColor:result location:coords];
+    UIImage* result = [FindTarget getImageMask:target];
+    result = [FindTarget imageWithColor:result location:coords];
     self.imgView.image = result;
     
     // print coordinates
