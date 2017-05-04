@@ -238,9 +238,6 @@
         else
         {
             [self autoTakeoff:fc];
-//            [DemoUtility showAlertViewWithTitle:nil message:@"Enter Virtual Stick Mode:Succeeded, attempting takeoff." cancelAlertAction:cancelAction defaultAlertAction:nil viewController:self];
-
-            //[self landDrone:_droneState drone:((DJIAircraft *)[DJISDKManager product])];
         }
     }];
 
@@ -265,9 +262,9 @@
             });
                 
         } else {
-            [self virtualPilot:fc];
-//            [NSThread sleepForTimeInterval:3];
-//            [self landDrone:_droneState drone:((DJIAircraft *)[DJISDKManager product])];
+            //[self virtualPilot:fc];
+            [NSThread sleepForTimeInterval:3];
+            [self landDrone:_droneState drone:((DJIAircraft *)[DJISDKManager product])];
         }
     }];
 
